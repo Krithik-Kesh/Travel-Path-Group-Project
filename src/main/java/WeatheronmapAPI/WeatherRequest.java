@@ -3,9 +3,8 @@ package WeatheronmapAPI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-/**
- * Holds and formats the query parameters for the OpenWeather One Call 3.0 API.
- */
+//Holds and formats the query parameters for the OpenWeather One Call 3.0 API.
+
 public class WeatherRequest {
 
     private final double lat;
@@ -25,7 +24,7 @@ public class WeatherRequest {
     }
 
     // conversion
-    public String toQueryString() {
+    public String toString() {
         String encodedUnits = URLEncoder.encode(units, StandardCharsets.UTF_8);
         String encodedExclude = URLEncoder.encode(excludeParts, StandardCharsets.UTF_8);
 
