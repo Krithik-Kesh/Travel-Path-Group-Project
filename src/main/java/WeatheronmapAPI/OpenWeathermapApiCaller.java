@@ -39,7 +39,7 @@ public class OpenWeathermapApiCaller {
 
             // RETURN JSON BODY STRING
             if (response.body() == null) {
-                return "{}"; // RETURN EMPTY JSON IF NULL
+                return "{}"; // RETURN EMPTY JSON IF none
             }
             return response.body().string();
         }
