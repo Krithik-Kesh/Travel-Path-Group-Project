@@ -7,17 +7,17 @@ import java.time.LocalDate;
 public class DailyWeather {
 
     private final LocalDate date;
-    private final double minTemperature;
-    private final double maxTemperature;
+    private final double minTemp;
+    private final double maxTemp;
     private final String description;
 
     public DailyWeather(LocalDate date,
-                        double minTemperature,
-                        double maxTemperature,
+                        double minTemp,
+                        double maxTemp,
                         String description) {
         this.date = date;
-        this.minTemperature = minTemperature;
-        this.maxTemperature = maxTemperature;
+        this.minTemp = minTemp;
+        this.maxTemp = maxTemp;
         this.description = description;
     }
 
@@ -26,11 +26,11 @@ public class DailyWeather {
     }
 
     public double getMinTemperature() {
-        return minTemperature;
+        return minTemp;
     }
 
     public double getMaxTemperature() {
-        return maxTemperature;
+        return maxTemp;
     }
 
     public String getDescription() {
