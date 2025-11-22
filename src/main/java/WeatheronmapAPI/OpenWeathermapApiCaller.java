@@ -22,7 +22,7 @@ public class OpenWeathermapApiCaller {
 
         // CONSTRUCT THE FINAL URL:
         // BASE_URL + queryString + "&appid=API_KEY"
-        String url = BASE_URL + weatherRequest.toQueryString() + "&appid=" + this.apiKey;
+        String url = BASE_URL + weatherRequest.toString() + "&appid=" + this.apiKey;
 
         // MAIN REQUEST
         Request request = new Request.Builder()

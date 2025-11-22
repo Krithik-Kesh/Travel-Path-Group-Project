@@ -38,4 +38,5 @@ build/
 .DS_Store
 
 ### API KEYS ###
-/.env
+.env
+src/.env

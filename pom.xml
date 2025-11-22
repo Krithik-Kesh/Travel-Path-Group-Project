@@ -35,12 +35,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Dotenv: used by APICaller to read .env -->
-        <dependency>
-            <groupId>io.github.cdimascio</groupId>
-            <artifactId>java-dotenv</artifactId>
-            <version>5.2.2</version>
-        </dependency>
+
 
     </dependencies>
 
