@@ -16,14 +16,18 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
     <!-- have changed the dependency -->
+
+
     <dependencies>
 
+        <!-- HTTP client -->
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
             <version>4.12.0</version>
         </dependency>
 
+        <!-- JUnit for tests -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -31,6 +35,19 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Dotenv: used by APICaller to read .env -->
+        <dependency>
+            <groupId>io.github.cdimascio</groupId>
+            <artifactId>java-dotenv</artifactId>
+            <version>5.2.2</version>
+        </dependency>
+
     </dependencies>
+
+
+
+
+
+
 
 </project>

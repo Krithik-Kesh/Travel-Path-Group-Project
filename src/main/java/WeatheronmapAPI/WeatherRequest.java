@@ -34,6 +34,16 @@ public class WeatherRequest {
                 "&units=" + encodedUnits;
     }
 
+    /**
+     * Returns the query string used by the OpenWeather API caller.
+     * We just reuse the existing toString() implementation.
+     */
+    public String toQueryString() {
+        return this.toString();
+    }
+
+
+
     // optional
     public double getLat() {
         return lat;

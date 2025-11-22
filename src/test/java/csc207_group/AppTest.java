@@ -1,4 +1,4 @@
-package csc207-group;
+package csc207_group;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
