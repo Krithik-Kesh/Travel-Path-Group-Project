@@ -16,7 +16,6 @@ public final class TipGenerator {
         double temp = weather.getTemperature();
         double precipitation = weather.getPrecipitation();
         double wind = weather.getWindSpeed();
-        String desc = weather.getDescription().toLowerCase();
 
         if (temp <= 0) {
             tips.add("Please Bring a winter coat.");
@@ -30,12 +29,8 @@ public final class TipGenerator {
             tips.add("T-shirts and lighter clothing are enough for this trip.");
         }
 
-        if (precipitation > 0.1||desc.contains("rain")) {
+        if (precipitation > 0.1) {
             tips.add("Pack an umbrella or rain jacket.");
-        }
-
-        if (desc.contains("snow")) {
-            tips.add("Bring waterproof boots and warm socks for snow.");
         }
 
         if (wind > 8.0) {
