@@ -33,6 +33,10 @@ Jinte Li: User storeis 6 and 7 from blueprint
 
 •	7. As a user, I want weather-based packing tips (e.g., umbrella for rain), so that I bring the right gear
 
+•	UI work contribution
+
+•   Work on data persistence
+
 Ethan: User stories 5 from blueprint
 
 •	5. As a user, I want to save my itinerary, so that I can return to it later.
