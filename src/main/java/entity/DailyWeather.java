@@ -1,6 +1,6 @@
 package entity;
 
-// src/main/java/entity/DailyWeather.java
+// src/main/java/entity/DailyWeather
 
 import java.time.LocalDate;
 

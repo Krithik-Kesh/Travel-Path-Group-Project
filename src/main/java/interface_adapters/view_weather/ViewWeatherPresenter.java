@@ -44,6 +44,7 @@ public class ViewWeatherPresenter implements ViewWeatherOutputBound {
                 .collect(Collectors.joining(System.lineSeparator()));
 
         // Give the data to viewmodel
+
         viewModel.setErrorMessage("");
         viewModel.setDestinationLabel(Data.getDestinationLabel());
         viewModel.setCurrentText(currentText);

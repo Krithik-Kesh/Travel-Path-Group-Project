@@ -33,6 +33,7 @@ public class WeatherViewModel {
     }
 
     // setDestinationLabel will store the old value and update the new one for viewModel
+
     public void setDestinationLabel(String destinationLabel) {
         String old = this.destination;
         this.destination = destinationLabel;

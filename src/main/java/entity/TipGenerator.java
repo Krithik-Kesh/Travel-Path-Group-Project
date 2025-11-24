@@ -3,9 +3,8 @@ package entity;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Pure-domain class: given weather, generates packing tips.
- */
+//Pure-domain class: given weather, generates packing tips.
+
 public final class TipGenerator {
 
     private TipGenerator() {
