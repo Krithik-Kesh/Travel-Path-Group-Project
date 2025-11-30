@@ -5,11 +5,11 @@ import java.util.List;
 
 public class ItineraryStop {
     private final String id;
-    private final TravelRecord record;
     private String cityName = "";
     private final double latitude;
     private final double longitude;
     private String notes;
+
     public ItineraryStop(String id,
                          String name,
                          double latitude,
@@ -46,17 +46,4 @@ public class ItineraryStop {
         this.notes = notes;
     }
 
-    public TravelRecord getRecord() {
-        return record;
-    }
-
-    public ItineraryStop findStopById(String stopId) {
-        for (ItineraryStop stop: ) {
-            if (stop.getId().equals(stopId)) {
-                return stop;
-            }
-        }
-        return null;
-    }
-}
 }
