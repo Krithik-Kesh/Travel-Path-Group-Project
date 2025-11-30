@@ -1,5 +1,6 @@
 package entity;
 
+
 public class WeatherData {
     private final double temp;
     private final String description;

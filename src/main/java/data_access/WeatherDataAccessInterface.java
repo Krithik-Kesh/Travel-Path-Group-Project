@@ -1,4 +1,4 @@
-package use_case;
+package data_access;
 
 import entity.WeatherData;
 import entity.DailyWeather;

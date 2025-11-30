@@ -1,5 +1,6 @@
-package entities;
+package entity;
 //travel record entities
+
 public class TravelRecord {
 
     private final String username;

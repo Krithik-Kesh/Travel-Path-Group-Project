@@ -2,7 +2,7 @@ package GeolocationsAPIs;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Optional;
+
 
 /**
  Class for User cleaning up the user input for their location
