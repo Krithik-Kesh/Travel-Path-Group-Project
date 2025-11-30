@@ -1,7 +1,7 @@
 package data_access;
 
 import entity.TravelRecord;
-import use_case.get_previous_data.HistoryRepo;
+import usecase.get_previous_data.HistoryRepo;
 
 import java.util.ArrayList;
 import java.util.HashMap;

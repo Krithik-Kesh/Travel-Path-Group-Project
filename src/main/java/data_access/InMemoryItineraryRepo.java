@@ -1,7 +1,7 @@
 package data_access;
 
 import entity.Itinerary;
-import use_case.ItineraryRepository;
+import usecase.ItineraryRepository;
 
 import java.util.HashMap;
 import java.util.Map;

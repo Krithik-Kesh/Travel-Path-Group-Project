@@ -2,8 +2,8 @@ package interface_adapters.view_weather;
 
 import entity.DailyWeather;
 import entity.WeatherData;
-import use_case.view_weather.OutputData;
-import use_case.view_weather.ViewWeatherOutputBound;
+import usecase.view_weather.OutputData;
+import usecase.view_weather.ViewWeatherOutputBound;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;

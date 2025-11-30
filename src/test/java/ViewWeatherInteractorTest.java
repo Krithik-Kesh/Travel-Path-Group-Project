@@ -2,10 +2,10 @@ import entity.DailyWeather;
 import entity.WeatherData;
 import org.junit.jupiter.api.Test;
 import data_access.WeatherDataAccessInterface;
-import use_case.view_weather.InputData;
-import use_case.view_weather.OutputData;
-import use_case.view_weather.ViewWeatherInteractor;
-import use_case.view_weather.ViewWeatherOutputBound;
+import usecase.view_weather.InputData;
+import usecase.view_weather.OutputData;
+import usecase.view_weather.ViewWeatherInteractor;
+import usecase.view_weather.ViewWeatherOutputBound;
 
 import java.io.IOException;
 import java.time.LocalDate;

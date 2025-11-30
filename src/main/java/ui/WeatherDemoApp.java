@@ -8,8 +8,8 @@ import interface_adapters.view_weather.ViewWeatherController;
 import interface_adapters.view_weather.ViewWeatherPresenter;
 import interface_adapters.view_weather.WeatherViewModel;
 import data_access.WeatherDataAccessInterface;
-import use_case.view_weather.ViewWeatherInputBound;
-import use_case.view_weather.ViewWeatherInteractor;
+import usecase.view_weather.ViewWeatherInputBound;
+import usecase.view_weather.ViewWeatherInteractor;
 import io.github.cdimascio.dotenv.Dotenv;
 
 import javax.swing.*;
