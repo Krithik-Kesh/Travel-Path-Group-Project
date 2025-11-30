@@ -27,7 +27,11 @@ Roger He: User stories 8 from blueprint:
 
 •	8. As a user, I want to set my trip start date and get daily reminders with weather highlights, so that I stay prepared.
 
+•	5. As a user, I want to save my itinerary, so that I can return to it later.
+
 •	UI work contribution
+
+•   Presentation Contribution (Partial)
 
 Steven Zhan: User story 6 from blueprint
 

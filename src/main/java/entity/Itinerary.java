@@ -1,5 +1,6 @@
 package entity;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +9,7 @@ public class Itinerary {
     private final String id;
     private final TravelRecord record;
     private final List<ItineraryStop> stops;
+    private LocalDate startDate;
 
     public Itinerary(String id, TravelRecord record, List<ItineraryStop> stops) {
         this.id = id;
@@ -17,6 +19,8 @@ public class Itinerary {
         } else {
             this.stops = new ArrayList<>(stops);
         }
+
+        this.startDate = null;
     }
 
     public String getId() {
@@ -39,4 +43,15 @@ public class Itinerary {
         }
         return null;
     }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
 }
+
+
