@@ -17,6 +17,8 @@ Steven Zhu (Yi Zhu): User stories 2 and 3 from blueprint:
 
 •	3. As a user, I want a 7-day forecast for my trip dates, so that I can plan activities ahead of time.
 
+•	7. As a user, I want weather-based packing tips (e.g., umbrella for rain), so that I bring the right gear.
+
 •	UI work contribution
 
 •	API weatheronmap
@@ -27,15 +29,17 @@ Roger He: User stories 8 from blueprint:
 
 •	UI work contribution
 
-Jinte Li: User storeis 6 and 7 from blueprint
+Steven Zhan: User story 6 from blueprint
 
 •	6. As a user, I want to attach notes to each stop, so that I can remember ideas or bookings.
 
-•	7. As a user, I want weather-based packing tips (e.g., umbrella for rain), so that I bring the right gear
+•	Presentation Contribution
 
 •	UI work contribution
 
 •   Work on data persistence
+
+•   Assist on User Story 7
 
 Ethan: User stories 5 from blueprint
 

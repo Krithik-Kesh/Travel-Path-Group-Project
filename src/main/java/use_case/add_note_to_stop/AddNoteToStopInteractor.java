@@ -1,5 +1,6 @@
 package use_case.add_note_to_stop;
 
+import entity.Itinerary;
 import entity.ItineraryStop;
 import use_case.ItineraryRepository;
 // Interactor.
