@@ -29,7 +29,7 @@ Roger He: User stories 8 from blueprint:
 
 •	UI work contribution
 
-Jinte Li: User storeis 6 from blueprint
+Steven Zhan: User story 6 from blueprint
 
 •	6. As a user, I want to attach notes to each stop, so that I can remember ideas or bookings.
 
