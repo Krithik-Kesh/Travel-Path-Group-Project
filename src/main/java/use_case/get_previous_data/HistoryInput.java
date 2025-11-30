@@ -1,14 +1,13 @@
 package use_case.get_previous_data;
-//
+
 public class HistoryInput {
+    private final String username;
 
-    private final String user;
-
-    public HistoryInput(String user) {
-        this.user = user;
+    public HistoryInput(String username) {
+        this.username = username;
     }
 
-    public String getUser() {
-        return user;
+    public String getUsername() {
+        return username;
     }
 }

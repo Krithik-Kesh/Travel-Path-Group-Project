@@ -12,7 +12,9 @@ public interface RouteDataAccessInterface {
     void addStop(ItineraryStop stop);
     List<ItineraryStop> getStops();
     RouteInfo getRoute(List<ItineraryStop> stops) throws IOException;
-
+    // SAVE ITINERARY
     void saveItinerary(Itinerary itinerary);
+    //LOAD ITINERARY
+    List<Itinerary> loadItineraries();
 }
 

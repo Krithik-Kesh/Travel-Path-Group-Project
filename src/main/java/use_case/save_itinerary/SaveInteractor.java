@@ -4,7 +4,6 @@ import entity.Itinerary;
 import entity.ItineraryStop;
 import entity.RouteInfo;
 import entity.TravelRecord;
-import data_access.WeatherDataAccessInterface;
 import interface_adapter.reorder_delete_stops.RouteDataAccessInterface;
 import java.util.List;
 import java.util.UUID;
