@@ -1,17 +1,13 @@
 package use_case.save_itinerary;
 
-import entity.TravelRecord;
-
-
 public class SaveInput {
+    private final String username;
 
-    private final TravelRecord record;
-
-    public SaveInput(TravelRecord record) {
-        this.record = record;
+    public SaveInput(String username) {
+        this.username = username;
     }
 
-    public TravelRecord getRecord() {
-        return record;
+    public String getUsername() {
+        return username;
     }
 }
