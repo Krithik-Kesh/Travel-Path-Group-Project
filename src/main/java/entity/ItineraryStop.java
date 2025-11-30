@@ -3,7 +3,7 @@ package entity;
 
 public class ItineraryStop {
     private final String id;
-    private final String name;
+    private String cityName = "";
     private final double latitude;
     private final double longitude;
     private String notes;
@@ -13,7 +13,7 @@ public class ItineraryStop {
                          double longitude,
                          String notes) {
         this.id = id;
-        this.name = name;
+        this.cityName = name;
         this.latitude = latitude;
         this.longitude = longitude;
         this.notes = notes;
@@ -24,7 +24,7 @@ public class ItineraryStop {
     }
 
     public String getName() {
-        return name;
+        return cityName;
     }
 
     public double getLatitude() {

@@ -1,11 +1,12 @@
 package interface_adapter.reorder_delete_stops;
+import interface_adapter.IteneraryViewModel;
 import use_case.reorder_delete_stops.OutputData;
 import use_case.reorder_delete_stops.OutputBoundary;
 
 public class ReorderDeleteStopsPresenter implements OutputBoundary {
-    private final RDStopsViewModel viewModel;
+    private final IteneraryViewModel viewModel;
 
-    public ReorderDeleteStopsPresenter(RDStopsViewModel viewModel) {
+    public ReorderDeleteStopsPresenter(IteneraryViewModel viewModel) {
         this.viewModel = viewModel;
     }
 

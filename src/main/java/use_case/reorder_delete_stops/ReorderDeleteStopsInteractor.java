@@ -1,5 +1,5 @@
 package use_case.reorder_delete_stops;
-import data_access.RouteDataAccessInterface;
+import interface_adapter.reorder_delete_stops.RouteDataAccessInterface;
 import entity.ItineraryStop;
 import entity.RouteInfo;
 import java.io.IOException;

@@ -1,11 +1,11 @@
-package interface_adapter.reorder_delete_stops;
+package interface_adapter;
 import entity.ItineraryStop;
 import entity.RouteInfo;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.List;
 
-public class RDStopsViewModel {
+public class IteneraryViewModel {
 
     private final PropertyChangeSupport support = new PropertyChangeSupport(this);
 
@@ -48,3 +48,5 @@ public class RDStopsViewModel {
         support.firePropertyChange("reorderDeleteStopsState", null, null);
     }
 }
+
+

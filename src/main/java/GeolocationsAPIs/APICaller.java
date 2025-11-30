@@ -1,61 +1,71 @@
 package GeolocationsAPIs;
 
+import entity.ItineraryStop;
+import entity.StopFactory;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import java.io.IOException;
 import io.github.cdimascio.dotenv.Dotenv;
+import org.json.JSONObject;
+import org.json.JSONArray;
 
-/**
- CALLS THE API WITH THE ENCODED ADDRESS FROM USERLOCAITON CALSS AN RETUNR THE RAW JSON
- */
 public class APICaller {
 
-    //NEW CLIENT REQUEST
     private final OkHttpClient client = new OkHttpClient();
-
-    //API KEY VARIABLE
     private final String apiKey;
-
-    //BASE URL FOR GMAPS API GEOCODING
     private static final String BASE_URL = "https://maps.googleapis.com/maps/api/geocode/json?address=";
 
     public APICaller() {
-
-        //LOAD API KEY FROM ENV
         Dotenv dotenv = Dotenv.load();
-        String key = dotenv.get("IPDATA_API_KEY");
-
-        //API KEY ATTRIBUTE
-        this.apiKey = key;
+        this.apiKey = dotenv.get("GOOGLE_API_KEY");
     }
 
     /**
-     CREATES THE FINAL URL TO CALL THE API, AN THROWS AN IOEXCEPTION IF THE REUQEST IS BAD.
-     THIS CLASS WILL ALSO RETURN THE RAW JSON FILE FROM THE GEOCOIDNG.
+     GETS RAW JSON FROM GOOOGLE
      */
     public String getJson(String encodedLocation) throws IOException {
-
-        // CONSTRUCT THE FINAL URL
         String url = BASE_URL + encodedLocation + "&key=" + this.apiKey;
 
-        //MAIN REQUEST
         Request request = new Request.Builder()
                 .url(url)
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
-
-            // IF REQUEST IF NOT 200 AND IF 200
             if (!response.isSuccessful()) {
-                throw new IOException("API Request Failed. Code: " + response.code() + " URL: " + url);
+                throw new IOException("API Request Failed. Code: " + response.code());
             }
 
-            //RETURN JSON BODY STRING
             if (response.body() == null) {
-                return "{}"; // RETURN EMPTY JSON IF NULL
+                return "{}";
             }
+            // Returns the raw text (e.g., "{ 'results': ... }")
             return response.body().string();
         }
+    }
+
+    /**
+     PARSES THE JSON INTO A ITENERARY STOP ENTITY
+     */
+    public ItineraryStop parseJsonToStop(String jsonString, String rawInput) {
+        JSONObject obj = new JSONObject(jsonString);
+
+        // SAFETY CHECK: WAS GOOGLE VALID
+        if (!obj.has("status") || !obj.getString("status").equals("OK")) {
+            throw new RuntimeException("API Error or No Results Found. Status: "
+                    + (obj.has("status") ? obj.getString("status") : "Unknown"));
+        }
+
+        JSONArray results = obj.getJSONArray("results");
+        JSONObject bestMatch = results.getJSONObject(0);
+        JSONObject location = bestMatch.getJSONObject("geometry").getJSONObject("location");
+
+        double lat = location.getDouble("lat");
+        double lon = location.getDouble("lng");
+        String formalName = bestMatch.getString("formatted_address");
+
+        // MAKES ITENERARY STOP VIA STOPFACTORY ENTITY
+        StopFactory factory = new StopFactory();
+        return factory.create(formalName, lat, lon);
     }
 }

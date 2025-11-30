@@ -1,6 +1,7 @@
 package data_access;
 import entity.ItineraryStop;
 import entity.RouteInfo;
+import interface_adapter.reorder_delete_stops.RouteDataAccessInterface;
 import io.github.cdimascio.dotenv.Dotenv;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -24,6 +25,17 @@ public class RouteDataAccess implements RouteDataAccessInterface {
         }
     }
 
+    // 2. IMPLEMENTED ADD METHOD (Must be outside getRoute)
+    @Override
+    public void addStop(ItineraryStop stop) {
+        this.stops.add(stop);
+    }
+
+    // 3. IMPLEMENTED GET METHOD (Must be outside getRoute)
+    @Override
+    public List<ItineraryStop> getStops() {
+        return this.stops;
+    }
     @Override
     public RouteInfo getRoute(List<ItineraryStop> stops) throws IOException {
         if (stops == null || stops.size() < 2) {
