@@ -11,11 +11,13 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RouteDataAccess implements RouteDataAccessInterface {
     private final OkHttpClient client = new OkHttpClient();
     private final String directionsToken;
+    private final List<ItineraryStop> stops = new ArrayList<>();
 
     public RouteDataAccess() {
         Dotenv dotenv = Dotenv.load();
