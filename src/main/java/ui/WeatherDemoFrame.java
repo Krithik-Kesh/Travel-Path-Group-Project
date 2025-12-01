@@ -88,36 +88,49 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
     private String currentUser = "";
     private String mainDestination = null;
 
+    public WeatherDemoFrame(GeocodingService geocoding,
+                            ViewWeatherController weatherControl,
+                            WeatherViewModel weatherView,
+                            IteneraryViewModel itineraryView,
+                            AddStopController addStopControl,
+                            AddNoteToStopController addNoteControl,
+                            NotesViewModel notesView,
+                            ItineraryRepository itineraryRepo,
+                            String itId,
+                            SetStartDateController setStartDateControl) {
 
-    public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
+        super("TravelPath");
+        // Dependencies assignment
+        geocodingService = geocoding;
+        weatherController = weatherControl;
+        weatherViewModel = weatherView;
+        itineraryViewModel = itineraryView;
+        addStopController = addStopControl;
+        addNoteController = addNoteControl;
+        notesViewModel = notesView;
+        itineraryRepository = itineraryRepo;
+        itineraryId = itId;
+        this.setStartDateController = setStartDateControl;
 
-    private final GeocodingService geocodingService;
-    private final ViewWeatherController weatherController;
-    private final WeatherViewModel weatherViewModel;
+        // Listeners
+        this.weatherViewModel.addPropertyChangeListener(this);
+        this.itineraryViewModel.addPropertyChangeListener(this);
 
-    private final IteneraryViewModel itineraryViewModel;
-    private final AddStopController addStopController;
+        // Frame Setup
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(1000, 700); // Slightly larger for better spacing
+        setLocationRelativeTo(null);
 
-    // for notes
-    private final AddNoteToStopController addNoteController;
-    private final NotesViewModel notesViewModel;
-    private final ItineraryRepository itineraryRepository;
-    private final String itineraryId;
+        buildUi();
+        setContentPane(cards);
+    }
 
-    // Note
-    private JTextArea noteArea;
-
-    // get Mapbox Directions for data access
-    private final RouteDataAccess routeDataAccess = new RouteDataAccess();
-
-    // the order on layout：login / main / history
-    private final CardLayout cardLayout = new CardLayout();
-    private final JPanel cards = new JPanel(cardLayout);
-
-    // Login page
-    private JTextField usernameField;
-    private JPasswordField passwordField;
-    private JLabel loginErrorLabel;
+    private void buildUi() {
+        cards.add(buildLoginPanel(), "login");
+        cards.add(buildMainPanel(), "main");
+        cards.add(buildHistoryPanel(), "history");
+        cardLayout.show(cards, "login");
+    }
 
     // Main page
     private JLabel welcomeLabel;
