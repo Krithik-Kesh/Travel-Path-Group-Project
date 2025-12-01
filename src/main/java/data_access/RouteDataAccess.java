@@ -11,7 +11,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
+import java.time.LocalDate;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -26,6 +26,7 @@ import java.util.List;
 public class RouteDataAccess implements RouteDataAccessInterface {
     private final OkHttpClient client = new OkHttpClient();
     private final String directionsToken;
+    private LocalDate startDate;
 
     // 1. MEMORY: The list where stops live while the app runs
     private final List<ItineraryStop> stops = new ArrayList<>();
@@ -37,6 +38,15 @@ public class RouteDataAccess implements RouteDataAccessInterface {
         Dotenv dotenv = Dotenv.load();
         this.directionsToken = dotenv.get("DIRECTIONS_TOKEN");
 
+    }
+
+    @Override
+    public void setStartDate(LocalDate date) {
+        this.startDate = date;
+    }
+    @Override
+    public LocalDate getStartDate() {
+        return this.startDate;
     }
 
     // ADDING THE ITENERARY STOPS TOGETHER
@@ -157,10 +167,10 @@ public class RouteDataAccess implements RouteDataAccessInterface {
 
                 loadedItineraries.add(new Itinerary(id, record, stopList));
             }
-            System.out.println("DAO: Loaded " + loadedItineraries.size() + " itineraries.");
+            System.out.println("Loaded " + loadedItineraries.size() + " itineraries.");
 
         } catch (Exception e) {
-            System.err.println("DAO Error Loading File: " + e.getMessage());
+            System.err.println("Error Loading File: " + e.getMessage());
         }
         return loadedItineraries;
     }

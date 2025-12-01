@@ -19,10 +19,8 @@ public class Itinerary {
         } else {
             this.stops = new ArrayList<>(stops);
         }
-
         this.startDate = null;
     }
-
     public String getId() {
         return id;
     }
@@ -51,7 +49,6 @@ public class Itinerary {
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
-
 }
 
 

@@ -4,6 +4,7 @@ import entity.RouteInfo;
 import java.io.IOException;
 import java.util.List;
 import entity.Itinerary;
+import java.time.LocalDate;
 
 public interface RouteDataAccessInterface {
     /**
@@ -16,5 +17,8 @@ public interface RouteDataAccessInterface {
     void saveItinerary(Itinerary itinerary);
     //LOAD ITINERARY
     List<Itinerary> loadItineraries();
+    //SAVE THE DATE
+    void setStartDate(LocalDate date);
+    LocalDate getStartDate();
 }
 

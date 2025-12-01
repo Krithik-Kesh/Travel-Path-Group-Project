@@ -1,8 +1,8 @@
 package ui;
 
 import GeolocationsAPIs.GeocodingService;
-import interface_adapters.view_weather.ViewWeatherController;
-import interface_adapters.view_weather.WeatherViewModel;
+import interface_adapter.view_weather_adapt.ViewWeatherController;
+import interface_adapter.view_weather_adapt.WeatherViewModel;
 
 import javax.swing.*;
 import java.awt.*;

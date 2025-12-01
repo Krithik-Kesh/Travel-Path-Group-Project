@@ -14,9 +14,9 @@ public class SaveController {
     /**
      * CONTROLLER PASSES RAW STRINGS
      */
-    public void execute(String username, String weather, String clothing) {
-        // CREATE INPUT WITH 3 STRINGS REQURIED BY CONSTRUCTOR
-        SaveInput input = new SaveInput(username, weather, clothing);
+    public void execute(String username, String weather, String clothing, String startDate) {
+        // CREATE INPUT WITH 4 STRINGS REQURIED BY CONSTRUCTOR
+        SaveInput input = new SaveInput(username, weather, clothing, startDate);
 
         // PASS TO THE BUSINESS LOGIC
         saveInteractor.execute(input);
