@@ -8,27 +8,88 @@ import interfaceadapter.view_weather_adapt.WeatherViewModel;
 import interfaceadapter.IteneraryViewModel;
 import interfaceadapter.add_multiple_stops.AddStopController;
 import interfaceadapter.set_start_date.SetStartDateController;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import data_access.RouteDataAccess;
 import entity.Itinerary;
 import entity.ItineraryStop;
 import entity.RouteInfo;
 import usecase.ItineraryRepository;
+
 import javax.swing.*;
-import javax.swing.ListSelectionModel;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.regex.Pattern;
+
 /**
- *  3 page
- *  - login page
- *  - main weather + travel page
- *  - past history page
+ * Refactored UI for a modern look
  */
 public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
+
+    // --- Dependencies ---
+    private final GeocodingService geocodingService;
+    private final ViewWeatherController weatherController;
+    private final WeatherViewModel weatherViewModel;
+    private final IteneraryViewModel itineraryViewModel;
+    private final AddStopController addStopController;
+    private final AddNoteToStopController addNoteController;
+    private final NotesViewModel notesViewModel;
+    private final ItineraryRepository itineraryRepository;
+    private final String itineraryId;
+    private final RouteDataAccess routeDataAccess = new RouteDataAccess();
+    private final SetStartDateController setStartDateController;
+
+    // --- UI Components ---
+    private final CardLayout cardLayout = new CardLayout();
+    private final JPanel cards = new JPanel(cardLayout);
+
+    // Styling Constants
+    private final Font TITLE_FONT = new Font("SansSerif", Font.BOLD, 24);
+    private final Font HEADER_FONT = new Font("SansSerif", Font.BOLD, 14);
+    private final Font NORMAL_FONT = new Font("SansSerif", Font.PLAIN, 12);
+    private final Color PRIMARY_COLOR = new Color(70, 130, 180); // Steel Blue
+    private final Color BG_COLOR = new Color(245, 245, 250); // Light Gray-Blue
+
+    // Login
+    private JTextField usernameField;
+    private JPasswordField passwordField;
+    private JLabel loginErrorLabel;
+
+    // Main Page Inputs
+    private JLabel welcomeLabel;
+    private JTextField originField;
+    private JTextField destinationField;
+    private JTextField startDateField;
+    private JTextField stopField;
+
+    // Main Page Outputs
+    private JTextArea currentWeatherArea;
+    private JTextArea tipsArea;
+    private JTextArea forecastArea;
+    private JTextArea noteArea;
+    private JLabel errorLabel;
+    private final java.util.Map<String, String> cityWeatherMap = new java.util.LinkedHashMap<>();
+
+    // Lists & Info
+    private JLabel travelDistanceValueLabel;
+    private JLabel travelTimeValueLabel;
+    private DefaultListModel<String> stopListModel;
+    private JList<String> stopList;
+
+    // History
+    private final DefaultListModel<String> historyModel = new DefaultListModel<>();
+    private JList<String> historyList;
+
+    private String currentUser = "";
+    private String mainDestination = null;
+
+
+    public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
 
     private final GeocodingService geocodingService;
     private final ViewWeatherController weatherController;
@@ -102,7 +163,7 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
                             String itId,
                             SetStartDateController setStartDateControl) {
 
-        super("TravelPath – Weather Demo");
+        super("TravelPath");
         geocodingService = geocoding;
         weatherController = weatherControl;
         weatherViewModel = weatherView;
@@ -332,7 +393,7 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JLabel title = new JLabel("Past weather history", SwingConstants.CENTER);
+        JLabel title = new JLabel("Past History", SwingConstants.CENTER);
         title.setFont(title.getFont().deriveFont(Font.BOLD, 18f));
         panel.add(title, BorderLayout.NORTH);
 
