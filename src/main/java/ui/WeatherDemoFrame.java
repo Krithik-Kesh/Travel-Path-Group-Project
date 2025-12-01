@@ -8,88 +8,86 @@ import interfaceadapter.view_weather_adapt.WeatherViewModel;
 import interfaceadapter.IteneraryViewModel;
 import interfaceadapter.add_multiple_stops.AddStopController;
 import interfaceadapter.set_start_date.SetStartDateController;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import data_access.RouteDataAccess;
 import entity.Itinerary;
 import entity.ItineraryStop;
 import entity.RouteInfo;
 import usecase.ItineraryRepository;
+
 import javax.swing.*;
-import javax.swing.ListSelectionModel;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.regex.Pattern;
+
 /**
- *  3 page
- *  - login page
- *  - main weather + travel page
- *  - past history page
+ * Refactored UI for a modern look
  */
 public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
 
+    // --- Dependencies ---
     private final GeocodingService geocodingService;
     private final ViewWeatherController weatherController;
     private final WeatherViewModel weatherViewModel;
-
     private final IteneraryViewModel itineraryViewModel;
     private final AddStopController addStopController;
-
-    // for notes
     private final AddNoteToStopController addNoteController;
     private final NotesViewModel notesViewModel;
     private final ItineraryRepository itineraryRepository;
     private final String itineraryId;
-
-    // Note
-    private JTextArea noteArea;
-
-    // get Mapbox Directions for data access
     private final RouteDataAccess routeDataAccess = new RouteDataAccess();
+    private final SetStartDateController setStartDateController;
 
-    // the order on layout：login / main / history
+    // --- UI Components ---
     private final CardLayout cardLayout = new CardLayout();
     private final JPanel cards = new JPanel(cardLayout);
 
-    // Login page
+    // Styling Constants
+    private final Font TITLE_FONT = new Font("SansSerif", Font.BOLD, 24);
+    private final Font HEADER_FONT = new Font("SansSerif", Font.BOLD, 14);
+    private final Font NORMAL_FONT = new Font("SansSerif", Font.PLAIN, 12);
+    private final Color PRIMARY_COLOR = new Color(70, 130, 180); // Steel Blue
+    private final Color BG_COLOR = new Color(245, 245, 250); // Light Gray-Blue
+
+    // Login
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JLabel loginErrorLabel;
 
-    // Main page
+    // Main Page Inputs
     private JLabel welcomeLabel;
-    private JTextField originField;         // 出发地
+    private JTextField originField;
     private JTextField destinationField;
+    private JTextField startDateField;
+    private JTextField stopField;
+
+    // Main Page Outputs
     private JTextArea currentWeatherArea;
     private JTextArea tipsArea;
     private JTextArea forecastArea;
+    private JTextArea noteArea;
     private JLabel errorLabel;
     private final java.util.Map<String, String> cityWeatherMap = new java.util.LinkedHashMap<>();
 
-    // Travel Info
+    // Lists & Info
     private JLabel travelDistanceValueLabel;
     private JLabel travelTimeValueLabel;
-
-    // Stops list
     private DefaultListModel<String> stopListModel;
     private JList<String> stopList;
-    private JTextField stopField;
 
-    // start date
-    private JTextField startDateField;
-    private String currentStartDate = "";
-
-    // 如果你已经有 SetStartDateController，就保留；否则可以先注释掉
-    private final SetStartDateController setStartDateController;
-
-    // History page
+    // History
     private final DefaultListModel<String> historyModel = new DefaultListModel<>();
     private JList<String> historyList;
 
     private String currentUser = "";
     private String mainDestination = null;
+    private String currentStartDate = "";
 
     public WeatherDemoFrame(GeocodingService geocoding,
                             ViewWeatherController weatherControl,
@@ -102,7 +100,8 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
                             String itId,
                             SetStartDateController setStartDateControl) {
 
-        super("TravelPath – Weather Demo");
+        super("TravelPath");
+        // Dependencies assignment
         geocodingService = geocoding;
         weatherController = weatherControl;
         weatherViewModel = weatherView;
@@ -113,245 +112,315 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
         itineraryRepository = itineraryRepo;
         itineraryId = itId;
         this.setStartDateController = setStartDateControl;
+
+        // Listeners
         this.weatherViewModel.addPropertyChangeListener(this);
         this.itineraryViewModel.addPropertyChangeListener(this);
 
+        // Frame Setup
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(950, 520);
+        setSize(1000, 700); // Slightly larger for better spacing
         setLocationRelativeTo(null);
 
         buildUi();
         setContentPane(cards);
     }
 
-    /** put login main history together */
     private void buildUi() {
         cards.add(buildLoginPanel(), "login");
         cards.add(buildMainPanel(), "main");
         cards.add(buildHistoryPanel(), "history");
-
         cardLayout.show(cards, "login");
     }
 
-    // Login page
+    // --- LOGIN PANEL --- UI
     private JPanel buildLoginPanel() {
-        JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBackground(BG_COLOR);
 
-        JLabel title = new JLabel("TravelPath – Login", SwingConstants.CENTER);
-        title.setFont(title.getFont().deriveFont(Font.BOLD, 22f));
-        panel.add(title, BorderLayout.NORTH);
+        JPanel card = new JPanel(new GridBagLayout());
+        card.setBackground(Color.WHITE);
+        card.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(200, 200, 200), 1),
+                BorderFactory.createEmptyBorder(40, 60, 40, 60)
+        ));
 
-        JPanel center = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
-        c.insets = new Insets(6, 6, 6, 6);
-        c.anchor = GridBagConstraints.WEST;
+        c.insets = new Insets(10, 10, 10, 10);
+        c.fill = GridBagConstraints.HORIZONTAL;
 
-        usernameField = new JTextField(18);
-        passwordField = new JPasswordField(18);
+        // Title
+        JLabel title = new JLabel("TravelPath Login");
+        title.setFont(TITLE_FONT);
+        title.setForeground(PRIMARY_COLOR);
+        title.setHorizontalAlignment(SwingConstants.CENTER);
+        c.gridx = 0; c.gridy = 0; c.gridwidth = 2;
+        card.add(title, c);
 
-        c.gridx = 0; c.gridy = 0;
-        center.add(new JLabel("Username:"), c);
+        // Inputs
+        c.gridwidth = 1; c.gridy = 1;
+        card.add(new JLabel("Username:"), c);
+        usernameField = new JTextField(15);
         c.gridx = 1;
-        center.add(usernameField, c);
+        card.add(usernameField, c);
 
-        c.gridx = 0; c.gridy = 1;
-        center.add(new JLabel("Password:"), c);
+        c.gridx = 0; c.gridy = 2;
+        card.add(new JLabel("Password:"), c);
+        passwordField = new JPasswordField(15);
         c.gridx = 1;
-        center.add(passwordField, c);
+        card.add(passwordField, c);
 
-        JButton loginButton = new JButton("Log in");
+        // Button
+        JButton loginButton = createStyledButton("Log In");
         loginButton.addActionListener(e -> onLogin());
-        c.gridx = 1; c.gridy = 2;
-        c.anchor = GridBagConstraints.EAST;
-        center.add(loginButton, c);
+        c.gridx = 0; c.gridy = 3; c.gridwidth = 2; c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.CENTER;
+        card.add(loginButton, c);
 
-        panel.add(center, BorderLayout.CENTER);
-
+        // Error
         loginErrorLabel = new JLabel(" ");
         loginErrorLabel.setForeground(Color.RED);
-        panel.add(loginErrorLabel, BorderLayout.SOUTH);
+        loginErrorLabel.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        c.gridy = 4;
+        card.add(loginErrorLabel, c);
 
+        panel.add(card);
         return panel;
     }
 
-    //  Main page
+    // --- MAIN PANEL ---
     private JPanel buildMainPanel() {
-        JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+        mainPanel.setBackground(BG_COLOR);
+        mainPanel.setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        // top part: Welcome + origin/destination + stops
-        JPanel top = new JPanel(new BorderLayout(5, 5));
+        // 1. Header (Welcome + History Button)
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(BG_COLOR);
         welcomeLabel = new JLabel("Welcome!", SwingConstants.LEFT);
-        top.add(welcomeLabel, BorderLayout.WEST);
+        welcomeLabel.setFont(TITLE_FONT);
 
-        JPanel inputPanel = new JPanel();
-        inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.Y_AXIS));
-
-        // First line：Origin + Destination + Get weather + Past history
-        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
-
-        searchPanel.add(new JLabel("Origin:"));
-        originField = new JTextField(10);
-        searchPanel.add(originField);
-
-        searchPanel.add(new JLabel("Destination:"));
-        destinationField = new JTextField(10);
-        searchPanel.add(destinationField);
-
-
-        JButton getWeatherButton = new JButton("Get weather");
-        getWeatherButton.addActionListener(e -> onGetWeather());
-        searchPanel.add(getWeatherButton);
-
-        JButton historyButton = new JButton("Past history");
+        JButton historyButton = createStyledButton("View History");
         historyButton.addActionListener(e -> cardLayout.show(cards, "history"));
-        searchPanel.add(historyButton);
 
-        inputPanel.add(searchPanel);
+        headerPanel.add(welcomeLabel, BorderLayout.WEST);
+        headerPanel.add(historyButton, BorderLayout.EAST);
+        mainPanel.add(headerPanel, BorderLayout.NORTH);
 
-        // second line ：Add stop
-        JPanel datePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
-        JLabel startDateLabel = new JLabel("Start date (YYYY-MM-DD):");
-        startDateField = new JTextField(10);
-        datePanel.add(startDateLabel);
-        datePanel.add(startDateField);
-        inputPanel.add(datePanel);
+        // 2. Center Content (Split into Left Controls and Right Results)
+        JPanel contentPanel = new JPanel(new GridLayout(1, 2, 20, 0)); // 2 Columns
+        contentPanel.setBackground(BG_COLOR);
 
-        JPanel stopInputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
-        stopInputPanel.add(new JLabel("Add stop:"));
+        // --- LEFT COLUMN: INPUTS ---
+        JPanel leftColumn = new JPanel();
+        leftColumn.setLayout(new BoxLayout(leftColumn, BoxLayout.Y_AXIS));
+        leftColumn.setBackground(BG_COLOR);
 
-        stopField = new JTextField(15);
-        stopInputPanel.add(stopField);
+        // A. Trip Details Panel
+        JPanel tripPanel = createSectionPanel("Trip Details");
+        tripPanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
 
-        JButton addStopButton = new JButton("Add stop");
+        // Row 1: Origin
+        gbc.gridx = 0; gbc.gridy = 0;
+        tripPanel.add(new JLabel("Origin:"), gbc);
+        originField = new JTextField();
+        gbc.gridx = 1;
+        tripPanel.add(originField, gbc);
+
+        // Row 2: Destination
+        gbc.gridx = 0; gbc.gridy = 1;
+        tripPanel.add(new JLabel("Destination:"), gbc);
+        destinationField = new JTextField();
+        gbc.gridx = 1;
+        tripPanel.add(destinationField, gbc);
+
+        // Row 3: Start Date
+        gbc.gridx = 0; gbc.gridy = 2;
+        tripPanel.add(new JLabel("Start Date (YYYY-MM-DD):"), gbc);
+        startDateField = new JTextField();
+        gbc.gridx = 1;
+        tripPanel.add(startDateField, gbc);
+
+        // Row 4: Get Weather Button
+        JButton getWeatherButton = createStyledButton("Get Forecast & Route");
+        getWeatherButton.addActionListener(e -> onGetWeather());
+        gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2; gbc.fill = GridBagConstraints.NONE; gbc.anchor = GridBagConstraints.CENTER;
+        tripPanel.add(getWeatherButton, gbc);
+
+        // B. Stops Panel
+        JPanel stopsPanel = createSectionPanel("Manage Stops");
+        stopsPanel.setLayout(new BorderLayout(5, 5));
+
+        JPanel addStopSubPanel = new JPanel(new BorderLayout(5, 0));
+        addStopSubPanel.setOpaque(false);
+        stopField = new JTextField();
+        JButton addStopButton = new JButton("+");
         addStopButton.addActionListener(e -> onAddStop());
-        stopInputPanel.add(addStopButton);
+        addStopSubPanel.add(stopField, BorderLayout.CENTER);
+        addStopSubPanel.add(addStopButton, BorderLayout.EAST);
+        addStopSubPanel.add(new JLabel("Add City: "), BorderLayout.WEST);
 
-        inputPanel.add(stopInputPanel);
-
-        // third line：Stops list + Note editing
         stopListModel = new DefaultListModel<>();
         stopList = new JList<>(stopListModel);
-        stopList.setVisibleRowCount(3);
-        stopList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        stopList.setVisibleRowCount(6);
         stopList.addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
-                onStopSelected();
-            }
+            if (!e.getValueIsAdjusting()) onStopSelected();
         });
 
-        JPanel stopsPanel = new JPanel(new BorderLayout(5, 0));
-        stopsPanel.add(new JLabel("Stops:"), BorderLayout.NORTH);
+        stopsPanel.add(addStopSubPanel, BorderLayout.NORTH);
         stopsPanel.add(new JScrollPane(stopList), BorderLayout.CENTER);
 
-        // Note editing
-        noteArea = new JTextArea(3, 20);
-        noteArea.setLineWrap(true);
-        noteArea.setWrapStyleWord(true);
-        JScrollPane noteScroll = new JScrollPane(noteArea);
-
-        JButton saveNoteButton = new JButton("Save note");
-        saveNoteButton.addActionListener(e -> onSaveNote());
-
-        JButton removeStopButton = new JButton("Remove selected");
+        JButton removeStopButton = new JButton("Remove Selected Stop");
         removeStopButton.addActionListener(e -> onRemoveSelected());
+        stopsPanel.add(removeStopButton, BorderLayout.SOUTH);
 
-        JPanel noteButtons = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
-        noteButtons.add(saveNoteButton);
-        noteButtons.add(removeStopButton);
+        // C. Notes Panel
+        JPanel notePanel = createSectionPanel("Notes");
+        notePanel.setLayout(new BorderLayout(5, 5));
+        noteArea = new JTextArea(4, 20);
+        noteArea.setLineWrap(true);
+        notePanel.add(new JScrollPane(noteArea), BorderLayout.CENTER);
+        JButton saveNoteButton = new JButton("Save Note to Selected Stop");
+        saveNoteButton.addActionListener(e -> onSaveNote());
+        notePanel.add(saveNoteButton, BorderLayout.SOUTH);
 
-        JPanel notePanel = new JPanel(new BorderLayout(5, 2));
-        notePanel.add(new JLabel("Note for selected stop:"), BorderLayout.NORTH);
-        notePanel.add(noteScroll, BorderLayout.CENTER);
-        notePanel.add(noteButtons, BorderLayout.SOUTH);
+        // Add sections to left column
+        leftColumn.add(tripPanel);
+        leftColumn.add(Box.createVerticalStrut(10));
+        leftColumn.add(stopsPanel);
+        leftColumn.add(Box.createVerticalStrut(10));
+        leftColumn.add(notePanel);
 
-        stopsPanel.add(notePanel, BorderLayout.SOUTH);
+        // --- RIGHT COLUMN: RESULTS ---
+        JPanel rightColumn = new JPanel();
+        rightColumn.setLayout(new BoxLayout(rightColumn, BoxLayout.Y_AXIS));
+        rightColumn.setBackground(BG_COLOR);
 
-        inputPanel.add(stopsPanel);
+        // D. Weather Display
+        JPanel weatherPanel = createSectionPanel("Weather & Forecast");
+        weatherPanel.setLayout(new GridLayout(3, 1, 5, 5));
 
-        top.add(inputPanel, BorderLayout.CENTER);
-        panel.add(top, BorderLayout.NORTH);
+        currentWeatherArea = createInfoArea();
+        tipsArea = createInfoArea();
+        forecastArea = createInfoArea();
 
-        //Current / Tips / Forecast
-        currentWeatherArea = new JTextArea(12, 26);
-        currentWeatherArea.setEditable(false);
-        tipsArea = new JTextArea(12, 26);
-        tipsArea.setEditable(false);
-        forecastArea = new JTextArea(12, 26);
-        forecastArea.setEditable(false);
+        weatherPanel.add(wrapWithLabel("Current Weather:", currentWeatherArea));
+        weatherPanel.add(wrapWithLabel("Clothing Tips:", tipsArea));
+        weatherPanel.add(wrapWithLabel("7-Day Forecast:", forecastArea));
 
-        JPanel center = new JPanel(new GridLayout(1, 3, 8, 0));
-        center.add(wrapTextArea("Current weather", currentWeatherArea));
-        center.add(wrapTextArea("Clothing tips", tipsArea));
-        center.add(wrapTextArea("7-day forecast", forecastArea));
+        // E. Travel Info Panel
+        JPanel infoPanel = createSectionPanel("Travel Summary");
+        infoPanel.setLayout(new GridLayout(2, 2, 10, 10));
 
-        panel.add(center, BorderLayout.CENTER);
+        infoPanel.add(new JLabel("Total Distance:"));
+        travelDistanceValueLabel = new JLabel("0.0 km");
+        travelDistanceValueLabel.setFont(HEADER_FONT);
+        infoPanel.add(travelDistanceValueLabel);
 
-        // Travel Info + What is wrong
+        infoPanel.add(new JLabel("Total Time:"));
+        travelTimeValueLabel = new JLabel("0 min");
+        travelTimeValueLabel.setFont(HEADER_FONT);
+        infoPanel.add(travelTimeValueLabel);
+
+        // Add sections to right column
+        rightColumn.add(weatherPanel);
+        rightColumn.add(Box.createVerticalStrut(10));
+        rightColumn.add(infoPanel);
+
+        // Add columns to content panel
+        contentPanel.add(leftColumn);
+        contentPanel.add(rightColumn);
+        mainPanel.add(contentPanel, BorderLayout.CENTER);
+
+        // Error Message Bar
         errorLabel = new JLabel(" ");
         errorLabel.setForeground(Color.RED);
+        errorLabel.setFont(new Font("SansSerif", Font.BOLD, 12));
+        errorLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        mainPanel.add(errorLabel, BorderLayout.SOUTH);
 
-        JPanel travelInfoPanel = buildTravelInfoPanel();
-        JPanel bottom = new JPanel(new BorderLayout());
-        bottom.add(travelInfoPanel, BorderLayout.CENTER);
-        bottom.add(errorLabel, BorderLayout.SOUTH);
+        return mainPanel;
+    }
 
-        panel.add(bottom, BorderLayout.SOUTH);
+    // --- HISTORY PANEL ---
+    private JPanel buildHistoryPanel() {
+        JPanel panel = new JPanel(new BorderLayout(10, 10));
+        panel.setBackground(BG_COLOR);
+        panel.setBorder(new EmptyBorder(20, 40, 20, 40));
+
+        JLabel title = new JLabel("Travel History", SwingConstants.CENTER);
+        title.setFont(TITLE_FONT);
+        panel.add(title, BorderLayout.NORTH);
+
+        historyList = new JList<>(historyModel);
+        historyList.setFont(NORMAL_FONT);
+        panel.add(new JScrollPane(historyList), BorderLayout.CENTER);
+
+        JButton backButton = createStyledButton("Back to Dashboard");
+        backButton.addActionListener(e -> cardLayout.show(cards, "main"));
+
+        JPanel btnPanel = new JPanel();
+        btnPanel.setBackground(BG_COLOR);
+        btnPanel.add(backButton);
+        panel.add(btnPanel, BorderLayout.SOUTH);
 
         return panel;
     }
 
-    private JPanel wrapTextArea(String title, JTextArea area) {
-        JPanel p = new JPanel(new BorderLayout());
-        p.add(new JLabel(title), BorderLayout.NORTH);
+    // --- HELPER METHODS FOR STYLING ---
+
+    private JButton createStyledButton(String text) {
+        JButton btn = new JButton(text);
+        btn.setBackground(PRIMARY_COLOR);
+        btn.setForeground(Color.BLACK); // Metal L&F sometimes overrides white text
+        btn.setFont(new Font("SansSerif", Font.BOLD, 12));
+        btn.setFocusPainted(false);
+        return btn;
+    }
+
+    private JPanel createSectionPanel(String title) {
+        JPanel p = new JPanel();
+        p.setBackground(Color.WHITE);
+        p.setBorder(new CompoundBorder(
+                BorderFactory.createTitledBorder(
+                        BorderFactory.createLineBorder(Color.LIGHT_GRAY),
+                        title,
+                        TitledBorder.LEFT,
+                        TitledBorder.TOP,
+                        HEADER_FONT,
+                        PRIMARY_COLOR
+                ),
+                new EmptyBorder(10, 10, 10, 10)
+        ));
+        return p;
+    }
+
+    private JTextArea createInfoArea() {
+        JTextArea area = new JTextArea();
+        area.setEditable(false);
+        area.setFont(NORMAL_FONT);
+        area.setLineWrap(true);
+        area.setWrapStyleWord(true);
+        area.setBackground(new Color(250, 250, 250));
+        return area;
+    }
+
+    private JPanel wrapWithLabel(String title, JTextArea area) {
+        JPanel p = new JPanel(new BorderLayout(5, 5));
+        p.setOpaque(false);
+        JLabel lbl = new JLabel(title);
+        lbl.setFont(new Font("SansSerif", Font.BOLD, 11));
+        p.add(lbl, BorderLayout.NORTH);
         p.add(new JScrollPane(area), BorderLayout.CENTER);
         return p;
     }
 
-    private JPanel buildTravelInfoPanel() {
-        JPanel travelPanel = new JPanel(new GridLayout(2, 2, 8, 4));
-        travelPanel.setBorder(BorderFactory.createTitledBorder("Travel Info"));
+    // --- LOGIC METHODS
 
-        JLabel distanceLabel = new JLabel("Total distance:");
-        JLabel timeLabel = new JLabel("Total time:");
-
-        travelDistanceValueLabel = new JLabel("0.0 km");
-        travelTimeValueLabel = new JLabel("0 min");
-
-        travelPanel.add(distanceLabel);
-        travelPanel.add(travelDistanceValueLabel);
-        travelPanel.add(timeLabel);
-        travelPanel.add(travelTimeValueLabel);
-
-        return travelPanel;
-    }
-
-    // History page
-    private JPanel buildHistoryPanel() {
-        JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        JLabel title = new JLabel("Past weather history", SwingConstants.CENTER);
-        title.setFont(title.getFont().deriveFont(Font.BOLD, 18f));
-        panel.add(title, BorderLayout.NORTH);
-
-        historyList = new JList<>(historyModel);
-        panel.add(new JScrollPane(historyList), BorderLayout.CENTER);
-
-        JButton backButton = new JButton("Back to main");
-        backButton.addActionListener(e -> cardLayout.show(cards, "main"));
-
-        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        bottom.add(backButton);
-        panel.add(bottom, BorderLayout.SOUTH);
-
-        return panel;
-    }
-
-    // logic for app
-
-    /** login button */
     private void onLogin() {
         String username = usernameField.getText().trim();
         String password = new String(passwordField.getPassword());
@@ -360,23 +429,17 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
             loginErrorLabel.setText("Please enter a username.");
             return;
         }
-
         int MIN_PASSWORD_LENGTH = 6;
         if (!checkForPassword(password, MIN_PASSWORD_LENGTH)) {
-            loginErrorLabel.setText(
-                    "Password must be at least " + MIN_PASSWORD_LENGTH +
-                            " characters and contain upper, lower case letters and a digit."
-            );
+            loginErrorLabel.setText("Password must be > " + MIN_PASSWORD_LENGTH + " chars, mixed case & digit.");
             return;
         }
-
         currentUser = username;
         welcomeLabel.setText("Welcome, " + currentUser + "!");
         loginErrorLabel.setText(" ");
         cardLayout.show(cards, "main");
     }
 
-    /** Add stop：use AddStop use case */
     private void onAddStop() {
         String city = stopField.getText().trim();
         if (city.isEmpty()) {
@@ -387,105 +450,79 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
             errorLabel.setText("AddStopController not wired.");
             return;
         }
-
-        addStopController.execute(city);     // 走 use case
+        addStopController.execute(city);
         stopField.setText("");
         errorLabel.setText("Adding stop: " + city + " ...");
     }
 
-    /** Remove selected ：delete the chosen stop from ViewModel and update  */
     private void onRemoveSelected() {
         int index = stopList.getSelectedIndex();
         if (index < 0) {
             errorLabel.setText("Please select a stop to remove.");
             return;
         }
-
-        java.util.List<ItineraryStop> currentStops = itineraryViewModel.getStops();
+        List<ItineraryStop> currentStops = itineraryViewModel.getStops();
         if (currentStops == null || index >= currentStops.size()) {
             errorLabel.setText("Invalid stop selection.");
             return;
         }
-
         ItineraryStop removed = currentStops.get(index);
-
         java.util.List<ItineraryStop> newStops = new java.util.ArrayList<>(currentStops);
         newStops.remove(index);
-
         itineraryViewModel.setStops(newStops);
         itineraryViewModel.setError("");
-
         errorLabel.setText("Removed stop: " + removed.getName());
     }
 
-    /** when select stop，show its note */
     private void onStopSelected() {
         int index = stopList.getSelectedIndex();
         if (index < 0) {
-            if (noteArea != null) {
-                noteArea.setText("");
-            }
+            if (noteArea != null) noteArea.setText("");
             return;
         }
-
         List<ItineraryStop> stops = itineraryViewModel.getStops();
         if (stops == null || index >= stops.size()) {
             noteArea.setText("");
             return;
         }
-
         ItineraryStop stop = stops.get(index);
         String notes = stop.getNotes();
         noteArea.setText(notes == null ? "" : notes);
     }
 
-    /** click on Save note：get AddNoteToStop use case，update UI and repo */
     private void onSaveNote() {
         int index = stopList.getSelectedIndex();
         if (index < 0) {
             errorLabel.setText("Please select a stop to save note.");
             return;
         }
-
         List<ItineraryStop> stops = itineraryViewModel.getStops();
         if (stops == null || index >= stops.size()) {
             errorLabel.setText("Invalid stop selection.");
             return;
         }
-
         String noteText = noteArea.getText().trim();
         if (noteText.isEmpty()) {
             errorLabel.setText("Note cannot be empty.");
             return;
         }
-
         ItineraryStop stop = stops.get(index);
-
         try {
-            // store the stops now into Itinerary than into repo
             Itinerary itinerary = itineraryRepository.findById(itineraryId);
             if (itinerary == null) {
                 itinerary = new Itinerary(itineraryId, null, stops);
             } else {
-                // give back the stop city list
                 itinerary.getStops().clear();
                 itinerary.getStops().addAll(stops);
             }
             itineraryRepository.save(itinerary);
-
-            // use use case
             addNoteController.addOrUpdateNote(itineraryId, stop.getId(), noteText);
-
-            // check error of Presenter / NotesViewModel
             if (notesViewModel.hasError()) {
                 errorLabel.setText(notesViewModel.getErrorMessage());
                 return;
             }
-
             itineraryViewModel.setStops(new java.util.ArrayList<>(stops));
-
             errorLabel.setText("Saved note for: " + stop.getName());
-
         } catch (Exception e) {
             errorLabel.setText("Failed to save note: " + e.getMessage());
         }
@@ -500,68 +537,41 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
             errorLabel.setText("Please enter both origin and destination.");
             return;
         }
-
-        // start date
         currentStartDate = "";
         if (!startDateText.isEmpty()) {
             try {
-                LocalDate parsedDate = LocalDate.parse(startDateText); // 默认格式：YYYY-MM-DD
-
-                currentStartDate = startDateText; //
-
+                LocalDate parsedDate = LocalDate.parse(startDateText);
+                currentStartDate = startDateText;
                 if (setStartDateController != null) {
-                    // SetStartDate use case，save it to itinerary
                     setStartDateController.setStartDate(parsedDate);
                 }
             } catch (DateTimeParseException e) {
                 errorLabel.setText("Start date must be in format YYYY-MM-DD.");
-                return; // the format of the date isnt correct show error
+                return;
             }
         }
-
         mainDestination = dest;
         currentWeatherArea.setText("");
-
-        // new search clear cityweather map
         cityWeatherMap.clear();
-
         try {
-            //  geocode origin & destination
             GeocodingService.LatLon destCoords = geocodingService.geocode(dest);
             GeocodingService.LatLon originCoords = geocodingService.geocode(originCity);
-
-            // show the weather of destination
             weatherController.viewWeather(destCoords.getLat(), destCoords.getLon(), dest);
 
-            // show the weather of all the stops cities
             List<ItineraryStop> stops = itineraryViewModel.getStops();
             if (stops != null) {
                 for (ItineraryStop s : stops) {
-                    weatherController.viewWeather(
-                            s.getLatitude(),
-                            s.getLongitude(),
-                            s.getName()
-                    );
+                    weatherController.viewWeather(s.getLatitude(), s.getLongitude(), s.getName());
                 }
             }
-
-            // calculate route：Origin -> stops -> Destination
             java.util.List<ItineraryStop> routeStops = new java.util.ArrayList<>();
-
-            routeStops.add(new ItineraryStop(
-                    "origin", originCity,
-                    originCoords.getLat(), originCoords.getLon(), ""
-            ));
+            routeStops.add(new ItineraryStop("origin", originCity, originCoords.getLat(), originCoords.getLon(), ""));
             if (stops != null && !stops.isEmpty()) {
                 routeStops.addAll(stops);
             }
-            routeStops.add(new ItineraryStop(
-                    "destination", dest,
-                    destCoords.getLat(), destCoords.getLon(), ""
-            ));
+            routeStops.add(new ItineraryStop("destination", dest, destCoords.getLat(), destCoords.getLon(), ""));
 
             RouteInfo routeInfo = routeDataAccess.getRoute(routeStops);
-
             if (routeInfo.getDistance() <= 0.0) {
                 updateTravelInfo("No route found", "No route found");
             } else {
@@ -569,35 +579,39 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
                 String timeText = String.format("%.0f min", routeInfo.getDurationMinutes());
                 updateTravelInfo(distanceText, timeText);
             }
-
         } catch (Exception ex) {
-            errorLabel.setText("Geocoding or directions failed: " + ex.getMessage());
+            errorLabel.setText("Error: " + ex.getMessage());
             updateTravelInfo("N/A", "N/A");
         }
     }
-
-
-    //  ViewModel -> UI update
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         Object src = evt.getSource();
 
+        // 1. LISTEN FOR WEATHER UPDATES
         if (src == weatherViewModel) {
             String name = evt.getPropertyName();
-
-            // Success：present()  setForecastText trigger once
-            // failed：presentError() setErrorMessage trigger once
             if ("forecastText".equals(name) || "errorMessage".equals(name)) {
                 handleWeatherModelChange();
             }
+        }
 
-        } else if (src == itineraryViewModel) {
-            handleItineraryModelChange();
+        // 2. LISTEN FOR ITINERARY UPDATES
+        else if (src == itineraryViewModel) {
+            // NOTE: Check if your ViewModel uses "itineraryState" or just "state"
+            if ("itineraryState".equals(evt.getPropertyName())) {
+                handleItineraryModelChange();
+            }
+            // Also update the list if "error" property changes, or any generic property
+            // This ensures the list updates even if the property name varies slightly
+            if (evt.getPropertyName() != null && evt.getPropertyName().contains("State")) {
+                handleItineraryModelChange();
+            }
         }
     }
 
-    /** WeatherViewModel update weather and history */
+    // --- Updates the text areas for weather ---
     private void handleWeatherModelChange() {
         String destination = weatherViewModel.getDestination();
         String currentText = weatherViewModel.getCurrentText();
@@ -605,45 +619,28 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
         String forecastText = weatherViewModel.getForecastText();
         String error = weatherViewModel.getErrorMessage();
 
-        // if there is error
         errorLabel.setText((error == null || error.isEmpty()) ? " " : error);
-        if (error != null && !error.isEmpty()) {
-            return;
-        }
+        if (error != null && !error.isEmpty()) return;
+        if (destination == null || destination.isEmpty() || currentText == null || currentText.isEmpty()) return;
 
-        if (destination == null || destination.isEmpty()
-                || currentText == null || currentText.isEmpty()) {
-            return;
-        }
-
-        // check if this is destination
         boolean isMain = destination.equalsIgnoreCase(mainDestination);
-
-        // check if its stop，or stop's note
         boolean isStop = false;
         String noteForCity = "";
-        java.util.List<ItineraryStop> stops = itineraryViewModel.getStops();
+        List<ItineraryStop> stops = itineraryViewModel.getStops();
         if (stops != null) {
             for (ItineraryStop s : stops) {
                 if (s.getName().equalsIgnoreCase(destination)) {
                     isStop = true;
-                    if (s.getNotes() != null) {
-                        noteForCity = s.getNotes();
-                    }
+                    if (s.getNotes() != null) noteForCity = s.getNotes();
                     break;
                 }
             }
         }
 
-        // update map，rebuild Current weather
         cityWeatherMap.put(destination, currentText);
-
         StringBuilder currentSb = new StringBuilder();
         for (java.util.Map.Entry<String, String> entry : cityWeatherMap.entrySet()) {
-            currentSb.append(entry.getKey())
-                    .append(":\n")
-                    .append(entry.getValue())
-                    .append("\n\n");
+            currentSb.append(entry.getKey()).append(":\n").append(entry.getValue()).append("\n\n");
         }
         currentWeatherArea.setText(currentSb.toString());
 
@@ -653,70 +650,37 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
             forecastArea.setText(forecastText != null ? forecastText : "");
         }
 
-        // history line：weather + tip + note + start date
-
+        // Logic for history list
         String weatherSummary = currentText.replace('\n', ' ');
-
-        // tip
         String tipSummary = "";
         if (tipsText != null && !tipsText.isEmpty()) {
             String[] lines = tipsText.split("\\R");
-            if (lines.length > 0) {
-                tipSummary = lines[0].replace("•", "").trim();
-            }
+            if (lines.length > 0) tipSummary = lines[0].replace("•", "").trim();
         }
-
         String noteSummary = (noteForCity == null) ? "" : noteForCity.trim();
-
-        String labelPrefix = "";
-        if (isMain) {
-            labelPrefix = "[Destination] ";
-        } else if (isStop) {
-            labelPrefix = "[Stop] ";
-        }
-
-        //  Add a start date symbol storing in the history if there is a start date
+        String labelPrefix = isMain ? "[Destination] " : (isStop ? "[Stop] " : "");
         String datePrefix = "";
         if (startDateField != null) {
             String startDateText = startDateField.getText().trim();
-            if (!startDateText.isEmpty()) {
-                datePrefix = "[Start " + startDateText + "] ";
-            }
+            if (!startDateText.isEmpty()) datePrefix = "[Start " + startDateText + "] ";
         }
 
         StringBuilder historyLine = new StringBuilder();
-        historyLine.append(datePrefix)          // <<< 新加这一行
-                .append(labelPrefix)
-                .append(destination)
-                .append(" — ")
-                .append(weatherSummary);
-
-        if (!tipSummary.isEmpty()) {
-            historyLine.append(" | Tips: ").append(tipSummary);
-        }
-        if (!noteSummary.isEmpty()) {
-            historyLine.append(" | Note: ").append(noteSummary);
-        }
+        historyLine.append(datePrefix).append(labelPrefix).append(destination).append(" — ").append(weatherSummary);
+        if (!tipSummary.isEmpty()) historyLine.append(" | Tips: ").append(tipSummary);
+        if (!noteSummary.isEmpty()) historyLine.append(" | Note: ").append(noteSummary);
 
         String historyStr = historyLine.toString();
-        // if same as last one dont add again
         int size = historyModel.getSize();
         if (size == 0 || !historyStr.equals(historyModel.getElementAt(size - 1))) {
             historyModel.addElement(historyStr);
         }
     }
 
-
-
-
-    /**
-     * when update Itenerary ViewModel: update stops list（with note ）
-     */
+    // --- RESTORED METHOD: Updates the Stops List ---
     private void handleItineraryModelChange() {
         String err = itineraryViewModel.getError();
-        if (err != null && !err.isEmpty()) {
-            errorLabel.setText(err);
-        }
+        if (err != null && !err.isEmpty()) errorLabel.setText(err);
 
         stopListModel.clear();
         List<ItineraryStop> stops = itineraryViewModel.getStops();
@@ -733,22 +697,13 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
         }
     }
 
-    /** update Travel Info  */
     private void updateTravelInfo(String distanceText, String timeText) {
-        if (travelDistanceValueLabel != null) {
-            travelDistanceValueLabel.setText(distanceText);
-        }
-        if (travelTimeValueLabel != null) {
-            travelTimeValueLabel.setText(timeText);
-        }
+        if (travelDistanceValueLabel != null) travelDistanceValueLabel.setText(distanceText);
+        if (travelTimeValueLabel != null) travelTimeValueLabel.setText(timeText);
     }
 
-    // check if password follow the rules
-
     private static boolean checkForPassword(String str, int minLength) {
-        if (str == null || str.length() < minLength) {
-            return false;
-        }
+        if (str == null || str.length() < minLength) return false;
         boolean hasLow = Pattern.matches(".*[a-z].*", str);
         boolean hasUp = Pattern.matches(".*[A-Z].*", str);
         boolean hasDigit = Pattern.matches(".*\\d.*", str);
