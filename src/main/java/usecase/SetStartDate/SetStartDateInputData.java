@@ -11,7 +11,7 @@ public class SetStartDateInputData {
     private final String itineraryId;
     private final LocalDate startDate;
 
-    public SetStartDateInputData(String itineraryId, LocalDate startDate) {
+    public SetStartDateInputData(LocalDate startDate) {
         this.itineraryId = itineraryId;
         this.startDate = startDate;
     }
