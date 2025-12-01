@@ -20,7 +20,7 @@ public class SaveInteractor implements SaveInputBoundary {
     public SaveInteractor(RouteDataAccess routeData,
                           SavePresenter presenter) {
         this.routeData = routeData;
-        this.presenter = presenter;
+        this.presenter = (SaveOutputBoundary) presenter;
     }
 
     @Override

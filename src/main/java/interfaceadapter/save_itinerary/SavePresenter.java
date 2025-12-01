@@ -1,7 +1,7 @@
 package interfaceadapter.save_itinerary;
 import interfaceadapter.IteneraryViewModel;
 import usecase.save_itinerary.SaveOutput;
-import use_case.save_itinerary.SaveOutputBoundary;
+import usecase.save_itinerary.SaveOutputBoundary;
 
 public class SavePresenter implements SaveOutputBoundary {
 

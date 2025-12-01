@@ -2,7 +2,7 @@ package usecase.get_previous_data;
 
 import entity.Itinerary;
 import entity.TravelRecord;
-import interface_adapter.reorder_delete_stops.RouteDataAccessInterface;
+import interfaceadapter.reorder_delete_stops.RouteDataAccessInterface;
 import java.util.ArrayList;
 import java.util.List;
 

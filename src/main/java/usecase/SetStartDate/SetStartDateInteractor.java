@@ -1,7 +1,7 @@
 package usecase.SetStartDate;
 
 import entity.Itinerary;
-import use_case.ItineraryRepository;
+import usecase.ItineraryRepository;
 
 import java.time.LocalDate;
 
