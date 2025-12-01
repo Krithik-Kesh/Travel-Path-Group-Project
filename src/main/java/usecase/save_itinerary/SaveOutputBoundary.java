@@ -1,5 +1,5 @@
-package use_case.save_itinerary;
-import use_case.save_itinerary.SaveOutput;
+package usecase.save_itinerary;
+import usecase.save_itinerary.SaveOutput;
 public interface SaveOutputBoundary {
 
     void present(SaveOutput output);

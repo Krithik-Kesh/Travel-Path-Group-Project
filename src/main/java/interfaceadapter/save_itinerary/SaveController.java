@@ -1,7 +1,7 @@
-package interface_adapter.save_itinerary;
+package interfaceadapter.save_itinerary;
 
-import use_case.save_itinerary.SaveInput;
-import use_case.save_itinerary.SaveInputBoundary;
+import usecase.save_itinerary.SaveInput;
+import usecase.save_itinerary.SaveInputBoundary;
 
 public class SaveController {
 

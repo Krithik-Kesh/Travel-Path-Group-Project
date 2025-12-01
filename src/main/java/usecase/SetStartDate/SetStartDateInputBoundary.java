@@ -1,4 +1,4 @@
-package use_case.SetStartDate;
+package usecase.SetStartDate;
 
 public interface SetStartDateInputBoundary {
     /* Called my Controller, implemented by the Interactor

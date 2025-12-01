@@ -1,10 +1,12 @@
-package use_case.add_stop;
+package usecase.add_stop;
 
 import GeolocationsAPIs.APICaller;
+import data_access.RouteDataAccess;
 import entity.ItineraryStop;
 import entity.RouteInfo;
 import entity.StopFactory;
-import interface_adapter.reorder_delete_stops.RouteDataAccessInterface; // OUR SHARED INTERFACE
+import interfaceadapter.add_multiple_stops.AddStopPresenter;
+import interfaceadapter.reorder_delete_stops.RouteDataAccessInterface; // OUR SHARED INTERFACE
 
 
 public class AddStopInteractor implements AddStopInputBoundary {
@@ -12,8 +14,8 @@ public class AddStopInteractor implements AddStopInputBoundary {
     final AddStopOutputBoundary presenter;
     private final StopFactory stopFactory;
 
-    public AddStopInteractor(RouteDataAccessInterface dataAccess,
-                             AddStopOutputBoundary presenter, StopFactory stopFactory) {
+    public AddStopInteractor(RouteDataAccess dataAccess,
+                             AddStopPresenter presenter, StopFactory stopFactory) {
         this.dataAccess = dataAccess;
         this.presenter = presenter;
         this.stopFactory = stopFactory;

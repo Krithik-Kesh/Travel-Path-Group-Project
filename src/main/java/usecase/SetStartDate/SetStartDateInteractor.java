@@ -1,4 +1,4 @@
-package use_case.SetStartDate;
+package usecase.SetStartDate;
 
 import entity.Itinerary;
 import use_case.ItineraryRepository;

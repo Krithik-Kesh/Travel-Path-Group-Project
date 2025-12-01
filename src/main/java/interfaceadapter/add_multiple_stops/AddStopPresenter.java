@@ -1,7 +1,7 @@
-package interface_adapter.add_multiple_stops;
-import interface_adapter.IteneraryViewModel; //MATTIAS VIEW MODEL
-import use_case.add_stop.AddStopOutputBoundary;
-import use_case.add_stop.AddStopOutputData;
+package interfaceadapter.add_multiple_stops;
+import interfaceadapter.IteneraryViewModel; //MATTIAS VIEW MODEL
+import usecase.add_stop.AddStopOutputBoundary;
+import usecase.add_stop.AddStopOutputData;
 
 public class AddStopPresenter implements AddStopOutputBoundary {
     private final IteneraryViewModel viewModel;

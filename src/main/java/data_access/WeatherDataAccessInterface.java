@@ -1,8 +1,6 @@
 package data_access;
-
 import entity.WeatherData;
 import entity.DailyWeather;
-
 import java.io.IOException;
 import java.util.List;
 

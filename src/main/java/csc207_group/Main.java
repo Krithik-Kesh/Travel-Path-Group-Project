@@ -7,8 +7,8 @@ import java.time.ZoneId;
 // --- DATA ACCESS IMPORTS ---
 import data_access.RouteDataAccess;
 import data_access.InMemoryHistoryRepo; // Use your actual HistoryRepo implementation
-import interface_adapter.view_weather_adapt.WeatherViewModel;
-import use_case.get_previous_data.HistoryRepo;
+import interfaceadapter.view_weather_adapt.WeatherViewModel;
+import usecase.get_previous_data.HistoryRepo;
 import data_access.OpenWeatherWeatherDataAccess;
 import data_access.WeatherDataAccessInterface;
 import WeatheronmapAPI.OpenWeathermapApiCaller;
@@ -17,23 +17,23 @@ import GeolocationsAPIs.GeocodingService;
 import io.github.cdimascio.dotenv.Dotenv;
 
 //VIEW MODEL IMPORTS
-import interface_adapter.IteneraryViewModel;
+import interfaceadapter.IteneraryViewModel;
 
 //ADD STOP IMPORTS
-import interface_adapter.add_multiple_stops.AddStopController;
-import interface_adapter.add_multiple_stops.AddStopPresenter;
-import use_case.add_stop.AddStopInteractor;
+import interfaceadapter.add_multiple_stops.AddStopController;
+import interfaceadapter.add_multiple_stops.AddStopPresenter;
+import usecase.add_stop.AddStopInteractor;
 import entity.StopFactory;
 
 //SAVE ITINERARY IMPORTS
-import interface_adapter.save_itinerary.SaveController;
-import interface_adapter.save_itinerary.SavePresenter;
-import use_case.save_itinerary.SaveInteractor;
+import interfaceadapter.save_itinerary.SaveController;
+import interfaceadapter.save_itinerary.SavePresenter;
+import usecase.save_itinerary.SaveInteractor;
 
 // --- VIEW WEATHER IMPORTS ---
-import interface_adapter.view_weather_adapt.ViewWeatherController;
-import interface_adapter.view_weather_adapt.ViewWeatherPresenter;
-import use_case.view_weather.ViewWeatherInteractor;
+import interfaceadapter.view_weather_adapt.ViewWeatherController;
+import interfaceadapter.view_weather_adapt.ViewWeatherPresenter;
+import usecase.view_weather.ViewWeatherInteractor;
 
 // --- VIEW IMPORTS ---
 //import view.ItineraryView; // THIS IS THE FRAME ONE YOU NEED TO MAKE IT STEVEN

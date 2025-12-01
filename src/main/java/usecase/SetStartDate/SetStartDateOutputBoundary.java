@@ -1,4 +1,4 @@
-package use_case.SetStartDate;
+package usecase.SetStartDate;
 
 /**
  * Output Boundary for the SetStartDate use case.

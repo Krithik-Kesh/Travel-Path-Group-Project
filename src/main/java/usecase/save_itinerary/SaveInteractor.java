@@ -1,10 +1,13 @@
-package use_case.save_itinerary;
+package usecase.save_itinerary;
 
+import data_access.RouteDataAccess;
 import entity.Itinerary;
 import entity.ItineraryStop;
 import entity.RouteInfo;
 import entity.TravelRecord;
-import interface_adapter.reorder_delete_stops.RouteDataAccessInterface;
+import interfaceadapter.reorder_delete_stops.RouteDataAccessInterface;
+import interfaceadapter.save_itinerary.SavePresenter;
+
 import java.util.List;
 import java.util.UUID;
 import java.time.LocalDate;
@@ -14,8 +17,8 @@ public class SaveInteractor implements SaveInputBoundary {
     private final RouteDataAccessInterface routeData;
     private final SaveOutputBoundary presenter;
 
-    public SaveInteractor(RouteDataAccessInterface routeData,
-                          SaveOutputBoundary presenter) {
+    public SaveInteractor(RouteDataAccess routeData,
+                          SavePresenter presenter) {
         this.routeData = routeData;
         this.presenter = presenter;
     }
