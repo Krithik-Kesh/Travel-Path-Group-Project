@@ -29,13 +29,35 @@ class ReorderDeleteStopsInteractorTest {
             this.lastStops = new ArrayList<>(stops);
             return routeInfoToReturn;
         }
+
+        @Override
+        public List<ItineraryStop> getStops() {
+            return lastStops;
+        }
+
+        @Override
+        public void addStop(ItineraryStop stop) {
+            lastStops.add(stop);
+        }
     }
 
     private static class TestRouteDataAccessFailure implements RouteDataAccessInterface {
 
+        private final List<ItineraryStop> lastStops = new ArrayList<>();
+
         @Override
         public RouteInfo getRoute(List<ItineraryStop> stops) throws IOException {
             throw new IOException("Simulated failure");
+        }
+
+        @Override
+        public List<ItineraryStop> getStops() {
+            return lastStops;
+        }
+
+        @Override
+        public void addStop(ItineraryStop stop) {
+            lastStops.add(stop);
         }
     }
 
@@ -108,4 +130,6 @@ class ReorderDeleteStopsInteractorTest {
         assertEquals("Unable to calculate route.", presenter.lastError);
     }
 }
+
+
 

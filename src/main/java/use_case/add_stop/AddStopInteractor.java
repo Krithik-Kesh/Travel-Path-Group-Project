@@ -3,8 +3,8 @@ package use_case.add_stop;
 import GeolocationsAPIs.APICaller;
 import entity.ItineraryStop;
 import entity.RouteInfo;
-import interface_adapter.reorder_delete_stops.RouteDataAccessInterface; // OUR SHARED INTERFACE
-import java.io.IOException;
+import data_access.RouteDataAccessInterface; // OUR SHARED INTERFACE
+
 
 public class AddStopInteractor implements AddStopInputBoundary {
     final RouteDataAccessInterface dataAccess;
