@@ -1,22 +1,20 @@
 package ui;
 
 import GeolocationsAPIs.GeocodingService;
-
 import interfaceadapter.notes.AddNoteToStopController;
 import interfaceadapter.notes.NotesViewModel;
 import interfaceadapter.view_weather_adapt.ViewWeatherController;
 import interfaceadapter.view_weather_adapt.WeatherViewModel;
-
 import interfaceadapter.IteneraryViewModel;
 import interfaceadapter.add_multiple_stops.AddStopController;
-
+import interfaceadapter.set_start_date.SetStartDateController;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import data_access.RouteDataAccess;
-
 import entity.Itinerary;
 import entity.ItineraryStop;
 import entity.RouteInfo;
 import usecase.ItineraryRepository;
-
 import javax.swing.*;
 import javax.swing.ListSelectionModel;
 import java.awt.*;
@@ -24,7 +22,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.regex.Pattern;
-
 /**
  *  3 page
  *  - login page
@@ -80,6 +77,13 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
     private JList<String> stopList;
     private JTextField stopField;
 
+    // start date
+    private JTextField startDateField;
+    private String currentStartDate = "";
+
+    // 如果你已经有 SetStartDateController，就保留；否则可以先注释掉
+    private final SetStartDateController setStartDateController;
+
     // History page
     private final DefaultListModel<String> historyModel = new DefaultListModel<>();
     private JList<String> historyList;
@@ -95,7 +99,8 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
                             AddNoteToStopController addNoteControl,
                             NotesViewModel notesView,
                             ItineraryRepository itineraryRepo,
-                            String itId) {
+                            String itId,
+                            SetStartDateController setStartDateControl) {
 
         super("TravelPath – Weather Demo");
         geocodingService = geocoding;
@@ -107,6 +112,7 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
         notesViewModel = notesView;
         itineraryRepository = itineraryRepo;
         itineraryId = itId;
+        this.setStartDateController = setStartDateControl;
         this.weatherViewModel.addPropertyChangeListener(this);
         this.itineraryViewModel.addPropertyChangeListener(this);
 
@@ -193,6 +199,7 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
         destinationField = new JTextField(10);
         searchPanel.add(destinationField);
 
+
         JButton getWeatherButton = new JButton("Get weather");
         getWeatherButton.addActionListener(e -> onGetWeather());
         searchPanel.add(getWeatherButton);
@@ -204,6 +211,13 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
         inputPanel.add(searchPanel);
 
         // second line ：Add stop
+        JPanel datePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
+        JLabel startDateLabel = new JLabel("Start date (YYYY-MM-DD):");
+        startDateField = new JTextField(10);
+        datePanel.add(startDateLabel);
+        datePanel.add(startDateField);
+        inputPanel.add(datePanel);
+
         JPanel stopInputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         stopInputPanel.add(new JLabel("Add stop:"));
 
@@ -468,8 +482,6 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
                 return;
             }
 
-            // 4. Interactor 已经对 repo 里的 stop.setNotes(...) 了，
-            //    这里为了触发 UI 刷新，再 set 一次 stops 到 ViewModel 里
             itineraryViewModel.setStops(new java.util.ArrayList<>(stops));
 
             errorLabel.setText("Saved note for: " + stop.getName());
@@ -479,31 +491,49 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
         }
     }
 
-    /** Get weather：对 Destination + Stops 请求天气，并用 Origin + Stops + Destination 算路线 */
     private void onGetWeather() {
         String originCity = originField.getText().trim();
         String dest = destinationField.getText().trim();
+        String startDateText = startDateField.getText().trim();
 
         if (originCity.isEmpty() || dest.isEmpty()) {
             errorLabel.setText("Please enter both origin and destination.");
             return;
         }
 
+        // start date
+        currentStartDate = "";
+        if (!startDateText.isEmpty()) {
+            try {
+                LocalDate parsedDate = LocalDate.parse(startDateText); // 默认格式：YYYY-MM-DD
+
+                currentStartDate = startDateText; //
+
+                if (setStartDateController != null) {
+                    // SetStartDate use case，save it to itinerary
+                    setStartDateController.setStartDate(parsedDate);
+                }
+            } catch (DateTimeParseException e) {
+                errorLabel.setText("Start date must be in format YYYY-MM-DD.");
+                return; // the format of the date isnt correct show error
+            }
+        }
+
         mainDestination = dest;
         currentWeatherArea.setText("");
 
-        // 新的一次查询，清空城市 -> 当前天气 的缓存
+        // new search clear cityweather map
         cityWeatherMap.clear();
 
         try {
-            // 1. geocode origin & destination
+            //  geocode origin & destination
             GeocodingService.LatLon destCoords = geocodingService.geocode(dest);
             GeocodingService.LatLon originCoords = geocodingService.geocode(originCity);
 
-            // 2. 先显示 destination 的天气（应该是主城市）
+            // show the weather of destination
             weatherController.viewWeather(destCoords.getLat(), destCoords.getLon(), dest);
 
-            // 3. 再显示所有 stops 的天气
+            // show the weather of all the stops cities
             List<ItineraryStop> stops = itineraryViewModel.getStops();
             if (stops != null) {
                 for (ItineraryStop s : stops) {
@@ -515,21 +545,16 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
                 }
             }
 
-            // 4. 计算路线：Origin -> stops -> Destination
+            // calculate route：Origin -> stops -> Destination
             java.util.List<ItineraryStop> routeStops = new java.util.ArrayList<>();
 
-            // origin
             routeStops.add(new ItineraryStop(
                     "origin", originCity,
                     originCoords.getLat(), originCoords.getLon(), ""
             ));
-
-            // 中间的 stops
             if (stops != null && !stops.isEmpty()) {
                 routeStops.addAll(stops);
             }
-
-            // destination
             routeStops.add(new ItineraryStop(
                     "destination", dest,
                     destCoords.getLat(), destCoords.getLon(), ""
@@ -550,6 +575,7 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
             updateTravelInfo("N/A", "N/A");
         }
     }
+
 
     //  ViewModel -> UI update
 
@@ -591,10 +617,9 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
         }
 
         // check if this is destination
-        boolean isMain = mainDestination != null
-                && destination.equalsIgnoreCase(mainDestination);
+        boolean isMain = destination.equalsIgnoreCase(mainDestination);
 
-        // chec if its stop，or stop's note
+        // check if its stop，or stop's note
         boolean isStop = false;
         String noteForCity = "";
         java.util.List<ItineraryStop> stops = itineraryViewModel.getStops();
@@ -610,7 +635,7 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
             }
         }
 
-        // update  map，rebuild Current weather
+        // update map，rebuild Current weather
         cityWeatherMap.put(destination, currentText);
 
         StringBuilder currentSb = new StringBuilder();
@@ -621,13 +646,15 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
                     .append("\n\n");
         }
         currentWeatherArea.setText(currentSb.toString());
+
         if (isMain) {
             destinationField.setText(destination);
             tipsArea.setText(tipsText != null ? tipsText : "");
             forecastArea.setText(forecastText != null ? forecastText : "");
         }
 
-        // 3. history line：weather + tip + note
+        // history line：weather + tip + note + start date
+
         String weatherSummary = currentText.replace('\n', ' ');
 
         // tip
@@ -648,8 +675,18 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
             labelPrefix = "[Stop] ";
         }
 
+        //  Add a start date symbol storing in the history if there is a start date
+        String datePrefix = "";
+        if (startDateField != null) {
+            String startDateText = startDateField.getText().trim();
+            if (!startDateText.isEmpty()) {
+                datePrefix = "[Start " + startDateText + "] ";
+            }
+        }
+
         StringBuilder historyLine = new StringBuilder();
-        historyLine.append(labelPrefix)
+        historyLine.append(datePrefix)          // <<< 新加这一行
+                .append(labelPrefix)
                 .append(destination)
                 .append(" — ")
                 .append(weatherSummary);
@@ -668,6 +705,8 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
             historyModel.addElement(historyStr);
         }
     }
+
+
 
 
     /**

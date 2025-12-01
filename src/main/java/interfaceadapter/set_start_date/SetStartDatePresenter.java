@@ -8,7 +8,6 @@ import usecase.SetStartDate.SetStartDateOutputData;
  * Converts output data into ViewModel updates.
  */
 public class SetStartDatePresenter implements SetStartDateOutputBoundary {
-
     private final SetStartDateViewModel viewModel;
 
     public SetStartDatePresenter(SetStartDateViewModel viewModel) {
@@ -16,22 +15,15 @@ public class SetStartDatePresenter implements SetStartDateOutputBoundary {
     }
 
 
-    public void presentSuccess(SetStartDateOutputData outputData) {
+    @Override
+    public void prepareSuccessView(SetStartDateOutputData outputData) {
         viewModel.setStartDate(outputData.getStartDate());
         viewModel.setMessage("Start date saved successfully.");
     }
 
-    public void presentFailure(String errorMessage) {
-        viewModel.setMessage(errorMessage);
-    }
-
-    @Override
-    public void prepareSuccessView(SetStartDateOutputData outputData) {
-
-    }
-
     @Override
     public void prepareFailView(String errorMessage) {
-
+        viewModel.setMessage(errorMessage);
     }
 }
+
