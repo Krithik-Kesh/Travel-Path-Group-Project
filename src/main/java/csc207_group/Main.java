@@ -1,127 +1,112 @@
 package csc207_group;
 
-import javax.swing.*;
-import java.awt.*;
-import java.time.ZoneId;
-
-// --- DATA ACCESS IMPORTS ---
-import data_access.RouteDataAccess;
-import data_access.InMemoryHistoryRepo; // Use your actual HistoryRepo implementation
-import interfaceadapter.view_weather_adapt.WeatherViewModel;
-import usecase.get_previous_data.HistoryRepo;
-import data_access.OpenWeatherWeatherDataAccess;
-import data_access.WeatherDataAccessInterface;
-import WeatheronmapAPI.OpenWeathermapApiCaller;
 import GeolocationsAPIs.APICaller;
 import GeolocationsAPIs.GeocodingService;
-import io.github.cdimascio.dotenv.Dotenv;
+import WeatheronmapAPI.OpenWeathermapApiCaller;
 
-//VIEW MODEL IMPORTS
-import interfaceadapter.IteneraryViewModel;
+import data_access.InMemoryItineraryRepo;
+import data_access.OpenWeatherWeatherDataAccess;
+import data_access.RouteDataAccess;
+import data_access.WeatherDataAccessInterface;
 
-//ADD STOP IMPORTS
-import interfaceadapter.add_multiple_stops.AddStopController;
-import interfaceadapter.add_multiple_stops.AddStopPresenter;
-import usecase.add_stop.AddStopInteractor;
 import entity.StopFactory;
 
-//SAVE ITINERARY IMPORTS
-import interfaceadapter.save_itinerary.SaveController;
-import interfaceadapter.save_itinerary.SavePresenter;
-import usecase.save_itinerary.SaveInteractor;
-
-// --- VIEW WEATHER IMPORTS ---
+import interfaceadapter.IteneraryViewModel;
+import interfaceadapter.add_multiple_stops.AddStopController;
+import interfaceadapter.add_multiple_stops.AddStopPresenter;
+import interfaceadapter.notes.AddNoteToStopController;
+import interfaceadapter.notes.AddNoteToStopPresenter;
+import interfaceadapter.notes.NotesViewModel;
 import interfaceadapter.view_weather_adapt.ViewWeatherController;
 import interfaceadapter.view_weather_adapt.ViewWeatherPresenter;
+import interfaceadapter.view_weather_adapt.WeatherViewModel;
+
+import io.github.cdimascio.dotenv.Dotenv;
+
+import ui.WeatherDemoFrame;
+import usecase.ItineraryRepository;
+import usecase.add_note_to_stop.AddNoteToStopInputBoundary;
+import usecase.add_note_to_stop.AddNoteToStopInteractor;
+import usecase.add_note_to_stop.AddNoteToStopOutputBoundary;
+import usecase.add_stop.AddStopInputBoundary;
+import usecase.add_stop.AddStopInteractor;
+import usecase.view_weather.ViewWeatherInputBound;
 import usecase.view_weather.ViewWeatherInteractor;
 
-// --- VIEW IMPORTS ---
-//import view.ItineraryView; // THIS IS THE FRAME ONE YOU NEED TO MAKE IT STEVEN
+import javax.swing.*;
+import java.time.ZoneId;
 
 public class Main {
+
     public static void main(String[] args) {
-        // Load Env Variables
-        Dotenv dotenv = Dotenv.load();
-        String openWeatherKey = dotenv.get("OPENWEATHER_API_KEY");
-        if (openWeatherKey == null) {
-            System.err.println("Missing OPENWEATHER_API_KEY in .env");
-        }
+        SwingUtilities.invokeLater(() -> {
 
-        // 1. SETUP THE WINDOW
-        JFrame application = new JFrame("Travel Path Builder");
-        application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        application.setSize(1000, 800);
+            // from env to get weatherapi key
+            Dotenv dotenv = Dotenv.load();
+            String openWeatherKey = dotenv.get("OPENWEATHER_API_KEY");
+            if (openWeatherKey == null) {
+                System.err.println("Missing OPENWEATHER_API_KEY in .env");
+            }
 
-        CardLayout cardLayout = new CardLayout();
-        JPanel views = new JPanel(cardLayout);
-        application.add(views);
+            // weather data access
+            OpenWeathermapApiCaller weatherApiCaller =
+                    new OpenWeathermapApiCaller(openWeatherKey);
+            WeatherDataAccessInterface weatherGateway =
+                    new OpenWeatherWeatherDataAccess(weatherApiCaller, ZoneId.systemDefault());
 
-        // 2. CREATE SHARED DATA ACCESS OBJECTS
+            // Geocoding service
+            GeocodingService geocodingService =
+                    new GeocodingService(new APICaller());
 
-        // A. Route Data Access (Holds the list of stops & Mapbox logic)
-        RouteDataAccess routeDataAccess = new RouteDataAccess();
+            // Weather use case
+            WeatherViewModel weatherViewModel = new WeatherViewModel();
+            ViewWeatherPresenter weatherPresenter = new ViewWeatherPresenter(weatherViewModel);
+            ViewWeatherInputBound weatherInteractor =
+                    new ViewWeatherInteractor(weatherGateway, weatherPresenter);
+            ViewWeatherController weatherController =
+                    new ViewWeatherController(weatherInteractor);
 
-        // B. History Repo (For saving final trips)
-        // If RouteDataAccess implements HistoryRepo, you can reuse it.
-        // Otherwise, create the separate repo.
-        HistoryRepo historyRepo = new InMemoryHistoryRepo();
+            // route and itinerary + AddStop use case
+            RouteDataAccess routeDataAccess = new RouteDataAccess();
+            IteneraryViewModel itineraryViewModel = new IteneraryViewModel();
+            StopFactory stopFactory = new StopFactory();
 
-        // C. Weather Data Access (For View Weather use case)
-        OpenWeathermapApiCaller weatherApiCaller = new OpenWeathermapApiCaller(openWeatherKey);
-        WeatherDataAccessInterface weatherGateway =
-                new OpenWeatherWeatherDataAccess(weatherApiCaller, ZoneId.systemDefault());
+            AddStopPresenter addStopPresenter =
+                    new AddStopPresenter(itineraryViewModel);
 
-        // D. Geocoding Service (For searching cities)
-        GeocodingService geocodingService = new GeocodingService(new APICaller());
+            AddStopInputBoundary addStopInteractor =
+                    new AddStopInteractor(routeDataAccess, addStopPresenter, stopFactory);
 
+            AddStopController addStopController =
+                    new AddStopController(addStopInteractor);
 
-        // 3. CREATE VIEW MODELS (The State)
-        IteneraryViewModel itineraryViewModel = new IteneraryViewModel();
-        WeatherViewModel weatherViewModel = new WeatherViewModel();
+            //add Notes
+            NotesViewModel notesViewModel = new NotesViewModel();
+            AddNoteToStopOutputBoundary notePresenter =
+                    new AddNoteToStopPresenter(notesViewModel);
 
+            ItineraryRepository itineraryRepository = new InMemoryItineraryRepo();
+            String itineraryId = "demo-itinerary";
 
-        // 4. WIRED UP USE CASES
+            AddNoteToStopInputBoundary noteInteractor =
+                    new AddNoteToStopInteractor(itineraryRepository, notePresenter);
+            AddNoteToStopController addNoteController =
+                    new AddNoteToStopController(noteInteractor);
 
-        // --- Use Case: Add Stop ---
-        AddStopPresenter addStopPresenter = new AddStopPresenter(itineraryViewModel);
-        StopFactory stopFactory = new StopFactory();
-        AddStopInteractor addStopInteractor = new AddStopInteractor(
-                routeDataAccess,
-                addStopPresenter,
-                stopFactory
-        );
-        AddStopController addStopController = new AddStopController(addStopInteractor);
-
-        // --- Use Case: Save Itinerary ---
-        SavePresenter savePresenter = new SavePresenter(itineraryViewModel);
-        SaveInteractor saveInteractor = new SaveInteractor(
-                routeDataAccess,
-                savePresenter
-        );
-        SaveController saveController = new SaveController(saveInteractor);
-
-        // --- Use Case: View Weather ---
-        ViewWeatherPresenter weatherPresenter = new ViewWeatherPresenter(weatherViewModel);
-        ViewWeatherInteractor weatherInteractor = new ViewWeatherInteractor(weatherGateway, weatherPresenter);
-        ViewWeatherController weatherController = new ViewWeatherController(weatherInteractor);
-
-        /* STEVEN THIS IS THE CODE USED TO CONNECT MAIN TO UI
-        // 5. CREATE THE UI (The View)
-        // You likely need to update your ItineraryView constructor to accept all these controllers
-        ItineraryView itineraryView = new ItineraryView(
-                addStopController,
-                saveController,
-                weatherController, // Pass this if the view has a "Check Weather" button
-                itineraryViewModel,
-                weatherViewModel,
-                geocodingService   // If the view uses this directly for auto-complete
-        );
-
-        views.add(itineraryView, itineraryView.viewName);
-
-        // 6. LAUNCH
-        cardLayout.show(views, itineraryView.viewName);
-        application.setVisible(true);
-        */
+            //UI Frame
+            WeatherDemoFrame frame = new WeatherDemoFrame(
+                    geocodingService,
+                    weatherController,
+                    weatherViewModel,
+                    itineraryViewModel,
+                    addStopController,
+                    addNoteController,
+                    notesViewModel,
+                    itineraryRepository,
+                    itineraryId
+            );
+            frame.setVisible(true);
+        });
     }
 }
+
