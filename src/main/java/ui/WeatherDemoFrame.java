@@ -417,3 +417,279 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
         p.add(new JScrollPane(area), BorderLayout.CENTER);
         return p;
     }
+
+    // --- LOGIC METHODS
+
+    private void onLogin() {
+        String username = usernameField.getText().trim();
+        String password = new String(passwordField.getPassword());
+
+        if (username.isEmpty()) {
+            loginErrorLabel.setText("Please enter a username.");
+            return;
+        }
+        int MIN_PASSWORD_LENGTH = 6;
+        if (!checkForPassword(password, MIN_PASSWORD_LENGTH)) {
+            loginErrorLabel.setText("Password must be > " + MIN_PASSWORD_LENGTH + " chars, mixed case & digit.");
+            return;
+        }
+        currentUser = username;
+        welcomeLabel.setText("Welcome, " + currentUser + "!");
+        loginErrorLabel.setText(" ");
+        cardLayout.show(cards, "main");
+    }
+
+    private void onAddStop() {
+        String city = stopField.getText().trim();
+        if (city.isEmpty()) {
+            errorLabel.setText("Please enter a stop city.");
+            return;
+        }
+        if (addStopController == null) {
+            errorLabel.setText("AddStopController not wired.");
+            return;
+        }
+        addStopController.execute(city);
+        stopField.setText("");
+        errorLabel.setText("Adding stop: " + city + " ...");
+    }
+
+    private void onRemoveSelected() {
+        int index = stopList.getSelectedIndex();
+        if (index < 0) {
+            errorLabel.setText("Please select a stop to remove.");
+            return;
+        }
+        List<ItineraryStop> currentStops = itineraryViewModel.getStops();
+        if (currentStops == null || index >= currentStops.size()) {
+            errorLabel.setText("Invalid stop selection.");
+            return;
+        }
+        ItineraryStop removed = currentStops.get(index);
+        java.util.List<ItineraryStop> newStops = new java.util.ArrayList<>(currentStops);
+        newStops.remove(index);
+        itineraryViewModel.setStops(newStops);
+        itineraryViewModel.setError("");
+        errorLabel.setText("Removed stop: " + removed.getName());
+    }
+
+    private void onStopSelected() {
+        int index = stopList.getSelectedIndex();
+        if (index < 0) {
+            if (noteArea != null) noteArea.setText("");
+            return;
+        }
+        List<ItineraryStop> stops = itineraryViewModel.getStops();
+        if (stops == null || index >= stops.size()) {
+            noteArea.setText("");
+            return;
+        }
+        ItineraryStop stop = stops.get(index);
+        String notes = stop.getNotes();
+        noteArea.setText(notes == null ? "" : notes);
+    }
+
+    private void onSaveNote() {
+        int index = stopList.getSelectedIndex();
+        if (index < 0) {
+            errorLabel.setText("Please select a stop to save note.");
+            return;
+        }
+        List<ItineraryStop> stops = itineraryViewModel.getStops();
+        if (stops == null || index >= stops.size()) {
+            errorLabel.setText("Invalid stop selection.");
+            return;
+        }
+        String noteText = noteArea.getText().trim();
+        if (noteText.isEmpty()) {
+            errorLabel.setText("Note cannot be empty.");
+            return;
+        }
+        ItineraryStop stop = stops.get(index);
+        try {
+            Itinerary itinerary = itineraryRepository.findById(itineraryId);
+            if (itinerary == null) {
+                itinerary = new Itinerary(itineraryId, null, stops);
+            } else {
+                itinerary.getStops().clear();
+                itinerary.getStops().addAll(stops);
+            }
+            itineraryRepository.save(itinerary);
+            addNoteController.addOrUpdateNote(itineraryId, stop.getId(), noteText);
+            if (notesViewModel.hasError()) {
+                errorLabel.setText(notesViewModel.getErrorMessage());
+                return;
+            }
+            itineraryViewModel.setStops(new java.util.ArrayList<>(stops));
+            errorLabel.setText("Saved note for: " + stop.getName());
+        } catch (Exception e) {
+            errorLabel.setText("Failed to save note: " + e.getMessage());
+        }
+    }
+
+    private void onGetWeather() {
+        String originCity = originField.getText().trim();
+        String dest = destinationField.getText().trim();
+        String startDateText = startDateField.getText().trim();
+
+        if (originCity.isEmpty() || dest.isEmpty()) {
+            errorLabel.setText("Please enter both origin and destination.");
+            return;
+        }
+        currentStartDate = "";
+        if (!startDateText.isEmpty()) {
+            try {
+                LocalDate parsedDate = LocalDate.parse(startDateText);
+                currentStartDate = startDateText;
+                if (setStartDateController != null) {
+                    setStartDateController.setStartDate(parsedDate);
+                }
+            } catch (DateTimeParseException e) {
+                errorLabel.setText("Start date must be in format YYYY-MM-DD.");
+                return;
+            }
+        }
+        mainDestination = dest;
+        currentWeatherArea.setText("");
+        cityWeatherMap.clear();
+        try {
+            GeocodingService.LatLon destCoords = geocodingService.geocode(dest);
+            GeocodingService.LatLon originCoords = geocodingService.geocode(originCity);
+            weatherController.viewWeather(destCoords.getLat(), destCoords.getLon(), dest);
+
+            List<ItineraryStop> stops = itineraryViewModel.getStops();
+            if (stops != null) {
+                for (ItineraryStop s : stops) {
+                    weatherController.viewWeather(s.getLatitude(), s.getLongitude(), s.getName());
+                }
+            }
+            java.util.List<ItineraryStop> routeStops = new java.util.ArrayList<>();
+            routeStops.add(new ItineraryStop("origin", originCity, originCoords.getLat(), originCoords.getLon(), ""));
+            if (stops != null && !stops.isEmpty()) {
+                routeStops.addAll(stops);
+            }
+            routeStops.add(new ItineraryStop("destination", dest, destCoords.getLat(), destCoords.getLon(), ""));
+
+            RouteInfo routeInfo = routeDataAccess.getRoute(routeStops);
+            if (routeInfo.getDistance() <= 0.0) {
+                updateTravelInfo("No route found", "No route found");
+            } else {
+                String distanceText = String.format("%.1f km", routeInfo.getDistance());
+                String timeText = String.format("%.0f min", routeInfo.getDurationMinutes());
+                updateTravelInfo(distanceText, timeText);
+            }
+        } catch (Exception ex) {
+            errorLabel.setText("Error: " + ex.getMessage());
+            updateTravelInfo("N/A", "N/A");
+        }
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        Object src = evt.getSource();
+        if (src == weatherViewModel) {
+            String name = evt.getPropertyName();
+            if ("forecastText".equals(name) || "errorMessage".equals(name)) {
+                handleWeatherModelChange();
+            }
+        } else if (src == itineraryViewModel) {
+            handleItineraryModelChange();
+        }
+    }
+
+    private void handleWeatherModelChange() {
+        String destination = weatherViewModel.getDestination();
+        String currentText = weatherViewModel.getCurrentText();
+        String tipsText = weatherViewModel.getTipsText();
+        String forecastText = weatherViewModel.getForecastText();
+        String error = weatherViewModel.getErrorMessage();
+
+        errorLabel.setText((error == null || error.isEmpty()) ? " " : error);
+        if (error != null && !error.isEmpty()) return;
+        if (destination == null || destination.isEmpty() || currentText == null || currentText.isEmpty()) return;
+
+        boolean isMain = destination.equalsIgnoreCase(mainDestination);
+        boolean isStop = false;
+        String noteForCity = "";
+        List<ItineraryStop> stops = itineraryViewModel.getStops();
+        if (stops != null) {
+            for (ItineraryStop s : stops) {
+                if (s.getName().equalsIgnoreCase(destination)) {
+                    isStop = true;
+                    if (s.getNotes() != null) noteForCity = s.getNotes();
+                    break;
+                }
+            }
+        }
+
+        cityWeatherMap.put(destination, currentText);
+        StringBuilder currentSb = new StringBuilder();
+        for (java.util.Map.Entry<String, String> entry : cityWeatherMap.entrySet()) {
+            currentSb.append(entry.getKey()).append(":\n").append(entry.getValue()).append("\n\n");
+        }
+        currentWeatherArea.setText(currentSb.toString());
+
+        if (isMain) {
+            destinationField.setText(destination);
+            tipsArea.setText(tipsText != null ? tipsText : "");
+            forecastArea.setText(forecastText != null ? forecastText : "");
+        }
+
+        String weatherSummary = currentText.replace('\n', ' ');
+        String tipSummary = "";
+        if (tipsText != null && !tipsText.isEmpty()) {
+            String[] lines = tipsText.split("\\R");
+            if (lines.length > 0) tipSummary = lines[0].replace("•", "").trim();
+        }
+        String noteSummary = (noteForCity == null) ? "" : noteForCity.trim();
+        String labelPrefix = isMain ? "[Destination] " : (isStop ? "[Stop] " : "");
+        String datePrefix = "";
+        if (startDateField != null) {
+            String startDateText = startDateField.getText().trim();
+            if (!startDateText.isEmpty()) datePrefix = "[Start " + startDateText + "] ";
+        }
+
+        StringBuilder historyLine = new StringBuilder();
+        historyLine.append(datePrefix).append(labelPrefix).append(destination).append(" — ").append(weatherSummary);
+        if (!tipSummary.isEmpty()) historyLine.append(" | Tips: ").append(tipSummary);
+        if (!noteSummary.isEmpty()) historyLine.append(" | Note: ").append(noteSummary);
+
+        String historyStr = historyLine.toString();
+        int size = historyModel.getSize();
+        if (size == 0 || !historyStr.equals(historyModel.getElementAt(size - 1))) {
+            historyModel.addElement(historyStr);
+        }
+    }
+
+    private void handleItineraryModelChange() {
+        String err = itineraryViewModel.getError();
+        if (err != null && !err.isEmpty()) errorLabel.setText(err);
+
+        stopListModel.clear();
+        List<ItineraryStop> stops = itineraryViewModel.getStops();
+        if (stops != null) {
+            for (ItineraryStop s : stops) {
+                String label = s.getName();
+                String notes = s.getNotes();
+                if (notes != null && !notes.isEmpty()) {
+                    String snippet = notes.length() > 20 ? notes.substring(0, 20) + "..." : notes;
+                    label = label + " — " + snippet;
+                }
+                stopListModel.addElement(label);
+            }
+        }
+    }
+
+    private void updateTravelInfo(String distanceText, String timeText) {
+        if (travelDistanceValueLabel != null) travelDistanceValueLabel.setText(distanceText);
+        if (travelTimeValueLabel != null) travelTimeValueLabel.setText(timeText);
+    }
+
+    private static boolean checkForPassword(String str, int minLength) {
+        if (str == null || str.length() < minLength) return false;
+        boolean hasLow = Pattern.matches(".*[a-z].*", str);
+        boolean hasUp = Pattern.matches(".*[A-Z].*", str);
+        boolean hasDigit = Pattern.matches(".*\\d.*", str);
+        return hasLow && hasUp && hasDigit;
+    }
+}
