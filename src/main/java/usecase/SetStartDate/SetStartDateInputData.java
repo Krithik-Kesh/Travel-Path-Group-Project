@@ -7,7 +7,6 @@ import java.time.LocalDate;
  * Immutable data passed from Controller → Interactor.
  */
 public class SetStartDateInputData {
-
     private final String itineraryId;
     private final LocalDate startDate;
 

@@ -8,7 +8,6 @@ import usecase.SetStartDate.SetStartDateOutputData;
  * Converts output data into ViewModel updates.
  */
 public class SetStartDatePresenter implements SetStartDateOutputBoundary {
-
     private final SetStartDateViewModel viewModel;
 
     public SetStartDatePresenter(SetStartDateViewModel viewModel) {

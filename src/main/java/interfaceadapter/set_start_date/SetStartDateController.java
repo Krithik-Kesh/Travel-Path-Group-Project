@@ -15,7 +15,6 @@ public class SetStartDateController {
         this.interactor = interactor;
         this.itineraryId = itineraryId;
     }
-
     /**
      * Called by the UI when the user selects a start date.
      */

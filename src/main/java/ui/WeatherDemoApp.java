@@ -32,7 +32,6 @@ import usecase.add_stop.AddStopInputBoundary;
 import usecase.add_stop.AddStopInteractor;
 import usecase.view_weather.ViewWeatherInputBound;
 import usecase.view_weather.ViewWeatherInteractor;
-
 import javax.swing.*;
 import java.time.ZoneId;
 
