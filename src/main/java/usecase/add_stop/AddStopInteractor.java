@@ -8,14 +8,23 @@ import entity.StopFactory;
 import interfaceadapter.add_multiple_stops.AddStopPresenter;
 import interfaceadapter.reorder_delete_stops.RouteDataAccessInterface; // OUR SHARED INTERFACE
 
-
 public class AddStopInteractor implements AddStopInputBoundary {
     final RouteDataAccessInterface dataAccess;
     final AddStopOutputBoundary presenter;
     private final StopFactory stopFactory;
 
     public AddStopInteractor(RouteDataAccess dataAccess,
-                             AddStopPresenter presenter, StopFactory stopFactory) {
+                             AddStopPresenter presenter,
+                             StopFactory stopFactory) {
+        this.dataAccess = dataAccess;
+        this.presenter = presenter;
+        this.stopFactory = stopFactory;
+    }
+
+    // Test-only constructor (for FakeDAO & FakePresenter)
+    public AddStopInteractor(RouteDataAccessInterface dataAccess,
+                             AddStopOutputBoundary presenter,
+                             StopFactory stopFactory) {
         this.dataAccess = dataAccess;
         this.presenter = presenter;
         this.stopFactory = stopFactory;
