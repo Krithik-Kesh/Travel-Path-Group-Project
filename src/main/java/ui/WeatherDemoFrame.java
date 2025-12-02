@@ -49,7 +49,7 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
     private final NotesViewModel notesViewModel;
     private final ItineraryRepository itineraryRepository;
     private final String itineraryId;
-    private final RouteDataAccess routeDataAccess = new RouteDataAccess();
+    private final RouteDataAccess routeDataAccess;
     private final SetStartDateController setStartDateController;
 
     // --- UI Components ---
@@ -107,6 +107,7 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
                             NotesViewModel notesView,
                             ItineraryRepository itineraryRepo,
                             String itId,
+                            RouteDataAccess routeDataAccess,
                             SetStartDateController setStartDateControl) {
 
         super("TravelPath");
@@ -121,6 +122,7 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
         itineraryRepository = itineraryRepo;
         itineraryId = itId;
         this.setStartDateController = setStartDateControl;
+        this.routeDataAccess = routeDataAccess;
 
         // Listeners
         this.weatherViewModel.addPropertyChangeListener(this);
@@ -473,18 +475,45 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
             errorLabel.setText("Please select a stop to remove.");
             return;
         }
+
         List<ItineraryStop> currentStops = itineraryViewModel.getStops();
         if (currentStops == null || index >= currentStops.size()) {
             errorLabel.setText("Invalid stop selection.");
             return;
         }
-        ItineraryStop removed = currentStops.get(index);
+
+        ItineraryStop toRemove = currentStops.get(index);
+
         java.util.List<ItineraryStop> newStops = new java.util.ArrayList<>(currentStops);
         newStops.remove(index);
         itineraryViewModel.setStops(newStops);
         itineraryViewModel.setError("");
-        errorLabel.setText("Removed stop: " + removed.getName());
+
+        try {
+            List<ItineraryStop> backendStops = routeDataAccess.getStops();
+            if (backendStops != null && !backendStops.isEmpty()) {
+                backendStops.removeIf(s -> s.getId().equals(toRemove.getId()));
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to sync RouteDataAccess: " + e.getMessage());
+        }
+
+        try {
+            Itinerary itinerary = itineraryRepository.findById(itineraryId);
+            if (itinerary == null) {
+                itinerary = new Itinerary(itineraryId, null, newStops);
+            } else {
+                itinerary.getStops().clear();
+                itinerary.getStops().addAll(newStops);
+            }
+            itineraryRepository.save(itinerary);
+        } catch (Exception e) {
+            System.err.println("Failed to update itinerary: " + e.getMessage());
+        }
+
+        errorLabel.setText("Removed stop: " + toRemove.getName());
     }
+
 
     private void onStopSelected() {
         int index = stopList.getSelectedIndex();

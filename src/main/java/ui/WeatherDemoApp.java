@@ -118,6 +118,7 @@ public class WeatherDemoApp {
                     notesViewModel,
                     itineraryRepository,
                     itineraryId,
+                    routeDataAccess,
                     setStartDateController
             );
             frame.setVisible(true);
