@@ -104,7 +104,7 @@ Build a Clean Architecture–compliant Java application that aggregates navigati
 **Clone the Repository:**
 
 ```bash
-git clone https://github.com/Krithik-Kesh/Travel-Path-Group-Project.git
+git clone https://github.com/Krithik-Kesh/Travel-Path.git
 ```
 
 **Create a `.env` file at the project root:**
