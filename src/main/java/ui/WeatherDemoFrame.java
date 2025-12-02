@@ -49,7 +49,7 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
     private final AddNoteToStopController addNoteController;
     private final NotesViewModel notesViewModel;
     private final ItineraryRepository itineraryRepository;
-    private final String itineraryId;
+    private String itineraryId;
     private final RouteDataAccess routeDataAccess;
     private final SetStartDateController setStartDateController;
 
@@ -461,19 +461,38 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
             loginErrorLabel.setText("Please enter a username.");
             return;
         }
+
         int MIN_PASSWORD_LENGTH = 6;
         if (!checkForPassword(password, MIN_PASSWORD_LENGTH)) {
             loginErrorLabel.setText("Password must be > " + MIN_PASSWORD_LENGTH + " chars, mixed case & digit.");
             return;
         }
+
         currentUser = username;
         welcomeLabel.setText("Welcome, " + currentUser + "!");
         loginErrorLabel.setText(" ");
+
+        this.itineraryId = "itinerary-" + currentUser;
+
+        try {
+            Itinerary it = itineraryRepository.findById(itineraryId);
+            if (it != null && it.getStops() != null) {
+                itineraryViewModel.setStops(new java.util.ArrayList<>(it.getStops()));
+            } else {
+                itineraryViewModel.setStops(new java.util.ArrayList<>());
+                Itinerary empty = new Itinerary(itineraryId, null, new java.util.ArrayList<>());
+                itineraryRepository.save(empty);
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to load user itinerary: " + e.getMessage());
+            itineraryViewModel.setStops(new java.util.ArrayList<>());
+        }
 
         loadHistoryForCurrentUser();
 
         cardLayout.show(cards, "main");
     }
+
 
     private void onAddStop() {
         String city = stopField.getText().trim();

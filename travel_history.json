@@ -57,6 +57,45 @@
         "[Start 2025-12-02] [Destination] Montreal \u2014 -8.0°C, overcast clouds Wind: 2.1 m/s Precipitation: 0.0 mm | Tips: Please Bring a winter coat.",
         "[Start 2025-12-02] [Stop] Calgary, AB, Canada \u2014 5.1°C, broken clouds Wind: 7.7 m/s Precipitation: 0.0 mm | Tips: Please Bring a medium-weight jacket or sweater. | Note: Decent place, not too bad!"
     ],
+    "kenny": [
+        "[Start 2025-12-02] [Destination] Montreal \u2014 -5.8°C, light snow Wind: 3.6 m/s Precipitation: 0.2 mm | Tips: Please Bring a winter coat.",
+        "[Start 2025-12-02] [Stop] Boston, MA, USA \u2014 0.9°C, heavy intensity rain Wind: 3.6 m/s Precipitation: 4.2 mm | Tips: Please Bring a medium-weight jacket or sweater.",
+        "[Start 2025-12-02] [Stop] Calgary, AB, Canada \u2014 1.8°C, light snow Wind: 5.1 m/s Precipitation: 0.2 mm | Tips: Please Bring a medium-weight jacket or sweater.",
+        "[Start 2025-12-02] [Stop] New York, NY, USA \u2014 4.2°C, heavy intensity rain Wind: 6.3 m/s Precipitation: 4.9 mm | Tips: Please Bring a medium-weight jacket or sweater.",
+        "[Start 2025-12-02] [Stop] Vancouver, BC, Canada \u2014 5.7°C, broken clouds Wind: 2.1 m/s Precipitation: 0.0 mm | Tips: Please Bring a medium-weight jacket or sweater.",
+        "[Start 2025-12-02] [Destination] Montreal \u2014 -5.8°C, light snow Wind: 3.6 m/s Precipitation: 0.2 mm | Tips: Please Bring a winter coat.",
+        "[Start 2025-12-02] [Stop] Boston, MA, USA \u2014 0.9°C, heavy intensity rain Wind: 3.6 m/s Precipitation: 4.2 mm | Tips: Please Bring a medium-weight jacket or sweater.",
+        "[Start 2025-12-02] [Stop] Vancouver, BC, Canada \u2014 5.7°C, broken clouds Wind: 2.1 m/s Precipitation: 0.0 mm | Tips: Please Bring a medium-weight jacket or sweater.",
+        "[Start 2025-12-02] [Stop] Calgary, AB, Canada \u2014 1.8°C, light snow Wind: 5.1 m/s Precipitation: 0.2 mm | Tips: Please Bring a medium-weight jacket or sweater.",
+        "[Start 2025-12-02] [Stop] New York, NY, USA \u2014 4.2°C, heavy intensity rain Wind: 6.3 m/s Precipitation: 4.9 mm | Tips: Please Bring a medium-weight jacket or sweater."
+    ],
+    "morning": [
+        "[Start 2025-12-02] [Destination] Montreal \u2014 -7.8°C, overcast clouds Wind: 2.1 m/s Precipitation: 0.0 mm | Tips: Please Bring a winter coat.",
+        "[Start 2025-12-02] [Stop] Boston, MA, USA \u2014 -2.7°C, few clouds Wind: 1.5 m/s Precipitation: 0.0 mm | Tips: Please Bring a winter coat.",
+        "[Start 2025-12-02] [Stop] Vancouver, BC, Canada \u2014 4.3°C, moderate rain Wind: 3.1 m/s Precipitation: 0.8 mm | Tips: Please Bring a medium-weight jacket or sweater."
+    ],
+    "nick": [
+        "[Start 2025-12-02] [Destination] Montreal \u2014 -5.5°C, light snow Wind: 3.6 m/s Precipitation: 0.2 mm | Tips: Please Bring a winter coat.",
+        "[Start 2025-12-02] [Stop] Calgary, AB, Canada \u2014 1.7°C, broken clouds Wind: 6.7 m/s Precipitation: 0.0 mm | Tips: Please Bring a medium-weight jacket or sweater.",
+        "[Start 2025-12-02] [Stop] Vancouver, BC, Canada \u2014 5.6°C, broken clouds Wind: 2.1 m/s Precipitation: 0.0 mm | Tips: Please Bring a medium-weight jacket or sweater.",
+        "[Start 2025-12-02] [Stop] New York, NY, USA \u2014 4.0°C, moderate rain Wind: 6.3 m/s Precipitation: 3.2 mm | Tips: Please Bring a medium-weight jacket or sweater.",
+        "[Start 2025-12-02] [Destination] Montreal \u2014 -5.5°C, light snow Wind: 3.6 m/s Precipitation: 0.2 mm | Tips: Please Bring a winter coat.",
+        "[Start 2025-12-02] [Stop] New York, NY, USA \u2014 4.0°C, moderate rain Wind: 6.3 m/s Precipitation: 3.2 mm | Tips: Please Bring a medium-weight jacket or sweater.",
+        "[Start 2025-12-02] [Stop] Vancouver, BC, Canada \u2014 5.6°C, broken clouds Wind: 2.1 m/s Precipitation: 0.0 mm | Tips: Please Bring a medium-weight jacket or sweater.",
+        "[Start 2025-12-02] [Stop] Calgary, AB, Canada \u2014 1.7°C, broken clouds Wind: 6.7 m/s Precipitation: 0.0 mm | Tips: Please Bring a medium-weight jacket or sweater."
+    ],
+    "nick2": [
+        "[Start 2025-12-02] [Destination] Montreal \u2014 -5.5°C, light snow Wind: 4.1 m/s Precipitation: 0.2 mm | Tips: Please Bring a winter coat.",
+        "[Start 2025-12-02] [Stop] Boston, MA, USA \u2014 1.0°C, moderate rain Wind: 3.6 m/s Precipitation: 3.7 mm | Tips: Please Bring a medium-weight jacket or sweater.",
+        "[Start 2025-12-02] [Stop] New York, NY, USA \u2014 3.9°C, moderate rain Wind: 7.2 m/s Precipitation: 2.7 mm | Tips: Please Bring a medium-weight jacket or sweater.",
+        "[Start 2025-12-02] [Stop] Calgary, AB, Canada \u2014 2.0°C, light snow Wind: 6.7 m/s Precipitation: 0.1 mm | Tips: Please Bring a medium-weight jacket or sweater.",
+        "[Start 2025-12-02] [Stop] Vancouver, BC, Canada \u2014 6.2°C, broken clouds Wind: 2.1 m/s Precipitation: 0.0 mm | Tips: Please Bring a medium-weight jacket or sweater.",
+        "[Start 2025-12-02] [Stop] Edmonton, AB, Canada \u2014 -6.2°C, overcast clouds Wind: 4.5 m/s Precipitation: 0.0 mm | Tips: Please Bring a winter coat.",
+        "[Start 2025-12-02] [Destination] Montreal \u2014 -5.5°C, light snow Wind: 4.1 m/s Precipitation: 0.2 mm | Tips: Please Bring a winter coat.",
+        "[Start 2025-12-02] [Stop] New York, NY, USA \u2014 3.9°C, moderate rain Wind: 7.2 m/s Precipitation: 2.7 mm | Tips: Please Bring a medium-weight jacket or sweater.",
+        "[Start 2025-12-02] [Stop] Calgary, AB, Canada \u2014 2.0°C, light snow Wind: 6.7 m/s Precipitation: 0.2 mm | Tips: Please Bring a medium-weight jacket or sweater.",
+        "[Start 2025-12-02] [Stop] Vancouver, BC, Canada \u2014 6.2°C, broken clouds Wind: 2.1 m/s Precipitation: 0.0 mm | Tips: Please Bring a medium-weight jacket or sweater."
+    ],
     "zeph": [
         "[Start 2025-12-02] [Destination] Montreal \u2014 -5.8°C, light snow Wind: 4.1 m/s Precipitation: 0.2 mm | Tips: Please Bring a winter coat.",
         "[Start 2025-12-02] [Stop] Boston, MA, USA \u2014 0.8°C, moderate rain Wind: 3.1 m/s Precipitation: 3.2 mm | Tips: Please Bring a medium-weight jacket or sweater. | Note: Cool city!",
@@ -233,18 +272,7 @@
         "[Start 2025-12-02] [Stop] Vancouver, BC, Canada \u2014 5.5°C, broken clouds Wind: 2.1 m/s Precipitation: 0.0 mm | Tips: Please Bring a medium-weight jacket or sweater. | Note: Amazing city!",
         "[Start 2025-12-02] [Stop] Boston, MA, USA \u2014 0.9°C, moderate rain Wind: 3.1 m/s Precipitation: 3.5 mm | Tips: Please Bring a medium-weight jacket or sweater. | Note: Cool city!"
     ],
-    "kenny": [
-        "[Start 2025-12-02] [Destination] Montreal \u2014 -5.8°C, light snow Wind: 3.6 m/s Precipitation: 0.2 mm | Tips: Please Bring a winter coat.",
-        "[Start 2025-12-02] [Stop] Boston, MA, USA \u2014 0.9°C, heavy intensity rain Wind: 3.6 m/s Precipitation: 4.2 mm | Tips: Please Bring a medium-weight jacket or sweater.",
-        "[Start 2025-12-02] [Stop] Calgary, AB, Canada \u2014 1.8°C, light snow Wind: 5.1 m/s Precipitation: 0.2 mm | Tips: Please Bring a medium-weight jacket or sweater.",
-        "[Start 2025-12-02] [Stop] New York, NY, USA \u2014 4.2°C, heavy intensity rain Wind: 6.3 m/s Precipitation: 4.9 mm | Tips: Please Bring a medium-weight jacket or sweater.",
-        "[Start 2025-12-02] [Stop] Vancouver, BC, Canada \u2014 5.7°C, broken clouds Wind: 2.1 m/s Precipitation: 0.0 mm | Tips: Please Bring a medium-weight jacket or sweater.",
-        "[Start 2025-12-02] [Destination] Montreal \u2014 -5.8°C, light snow Wind: 3.6 m/s Precipitation: 0.2 mm | Tips: Please Bring a winter coat.",
-        "[Start 2025-12-02] [Stop] Boston, MA, USA \u2014 0.9°C, heavy intensity rain Wind: 3.6 m/s Precipitation: 4.2 mm | Tips: Please Bring a medium-weight jacket or sweater.",
-        "[Start 2025-12-02] [Stop] Vancouver, BC, Canada \u2014 5.7°C, broken clouds Wind: 2.1 m/s Precipitation: 0.0 mm | Tips: Please Bring a medium-weight jacket or sweater.",
-        "[Start 2025-12-02] [Stop] Calgary, AB, Canada \u2014 1.8°C, light snow Wind: 5.1 m/s Precipitation: 0.2 mm | Tips: Please Bring a medium-weight jacket or sweater.",
-        "[Start 2025-12-02] [Stop] New York, NY, USA \u2014 4.2°C, heavy intensity rain Wind: 6.3 m/s Precipitation: 4.9 mm | Tips: Please Bring a medium-weight jacket or sweater."
-    ],
+    "name2": ["[Start 2025-12-02] [Destination] Montreal \u2014 -6.2°C, broken clouds Wind: 3.6 m/s Precipitation: 0.0 mm | Tips: Please Bring a winter coat."],
     "hey": [
         "[Start 2025-12-02] [Destination] Montreal \u2014 -7.9°C, overcast clouds Wind: 2.1 m/s Precipitation: 0.0 mm | Tips: Please Bring a winter coat.",
         "[Start 2025-12-02] [Stop] Boston, MA, USA \u2014 -2.8°C, few clouds Wind: 1.5 m/s Precipitation: 0.0 mm | Tips: Please Bring a winter coat.",
@@ -263,9 +291,10 @@
         "[Start 2025-12-02] [Stop] Vancouver, BC, Canada \u2014 5.4°C, broken clouds Wind: 2.1 m/s Precipitation: 0.0 mm | Tips: Please Bring a medium-weight jacket or sweater. | Note: Amazing city!",
         "[Start 2025-12-02] [Stop] New York, NY, USA \u2014 4.1°C, heavy intensity rain Wind: 8.9 m/s Precipitation: 5.6 mm | Tips: Please Bring a medium-weight jacket or sweater. | Note: Cool city!"
     ],
-    "morning": [
-        "[Start 2025-12-02] [Destination] Montreal \u2014 -7.8°C, overcast clouds Wind: 2.1 m/s Precipitation: 0.0 mm | Tips: Please Bring a winter coat.",
-        "[Start 2025-12-02] [Stop] Boston, MA, USA \u2014 -2.7°C, few clouds Wind: 1.5 m/s Precipitation: 0.0 mm | Tips: Please Bring a winter coat.",
-        "[Start 2025-12-02] [Stop] Vancouver, BC, Canada \u2014 4.3°C, moderate rain Wind: 3.1 m/s Precipitation: 0.8 mm | Tips: Please Bring a medium-weight jacket or sweater."
+    "name1": [
+        "[Start 2025-12-02] [Destination] Montreal \u2014 -6.1°C, broken clouds Wind: 3.6 m/s Precipitation: 0.0 mm | Tips: Please Bring a winter coat.",
+        "[Start 2025-12-02] [Stop] Boston, MA, USA \u2014 1.6°C, moderate rain Wind: 7.2 m/s Precipitation: 2.2 mm | Tips: Please Bring a medium-weight jacket or sweater.",
+        "[Start 2025-12-02] [Stop] New York, NY, USA \u2014 4.2°C, light rain Wind: 8.1 m/s Precipitation: 0.4 mm | Tips: Please Bring a medium-weight jacket or sweater.",
+        "[Start 2025-12-02] [Stop] Vancouver, BC, Canada \u2014 7.3°C, broken clouds Wind: 2.2 m/s Precipitation: 0.0 mm | Tips: Please Bring a medium-weight jacket or sweater."
     ]
 }
