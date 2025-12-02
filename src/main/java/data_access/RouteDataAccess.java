@@ -31,6 +31,13 @@ public class RouteDataAccess implements RouteDataAccessInterface {
     // 1. MEMORY: The list where stops live while the app runs
     private final List<ItineraryStop> stops = new ArrayList<>();
 
+    public void setStops(List<ItineraryStop> newStops) {
+        this.stops.clear();
+        if (newStops != null) {
+            this.stops.addAll(newStops);
+        }
+    }
+
     // 2. STORAGE: The file where data is saved permanently
     private static final String JSON_FILE_PATH = "saved_itineraries.json";
 
