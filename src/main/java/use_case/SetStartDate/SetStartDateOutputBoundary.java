@@ -11,6 +11,9 @@ public interface  SetStartDateOutputBoundary {
     /* Interface, methods do not have implementation
      */
 
-    void setStartDateSuccess(SetStartDateOutputData output);
-    void setStartDateFailure(String errorMessage);
+    // Called when itinerary start date is successfully saved
+    void prepareSuccessView(SetStartDateOutputData outputData);
+
+    // Called when itinerary start date is not successfully saved
+    void prepareFailView(String errorMessage);
 }

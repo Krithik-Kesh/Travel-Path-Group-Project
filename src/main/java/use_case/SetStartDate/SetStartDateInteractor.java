@@ -59,7 +59,6 @@ public class SetStartDateInteractor implements SetStartDateInputBoundary {
 
         // Itinerary found: Set itinerary
         itinerary.setStartDate(startDate); // Must be done in UC5
-        itineraryDAO.save(username,itineraryId, itinerary); // Again... must be done in UC5
         SetStartDateOutputData outputData = new SetStartDateOutputData(username, startDate, itineraryId);
         presenter.prepareSuccessView(outputData);
 
