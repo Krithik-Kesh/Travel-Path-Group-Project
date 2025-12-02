@@ -1,72 +1,166 @@
-Draft: 
-Individual contribution:
 
-Krithik: User stories 1 and 4 from blueprint:
+---
 
-•	1. As a user, I want to search a destination, so that I can confirm where I’m going.
+# TravelPath – Smart Itinerary Planner
 
-•	4. As a user, I want to add multiple stops to an itinerary, so that I can plan a multi-city trip.
+TravelPath is a desktop application designed to streamline the travel planning process. Users can build multi-city itineraries, calculate travel routes, check real-time weather, receive packing suggestions, and manage trip notes — all in one interface.
 
-•	UI work contribution
+---
 
-•	API geolocations
+## Table of Contents
 
-Steven Zhu (Yi Zhu): User stories 2 and 3 from blueprint:
+* [Team Information](#team-information)
+* [App Introduction & Objectives](#app-introduction--objectives)
+* [Main Features](#main-features)
+* [Technology Stack](#technology-stack)
+* [User Guide](#user-guide)
+* [Visuals & Interface](#visuals--interface)
+* [Documentation & Diagrams](#documentation--diagrams)
+* [Future Plans](#future-plans)
+* [References](#references)
 
-•	2. As a user, I want to view the current weather at my destination, so that I can decide what to wear today.
+---
 
-•	3. As a user, I want a 7-day forecast for my trip dates, so that I can plan activities ahead of time.
+## Team Information
 
-•	7. As a user, I want weather-based packing tips (e.g., umbrella for rain), so that I bring the right gear.
+| Name            | Role / Contributions                                      |
+| --------------- | --------------------------------------------------------- |
+| Krithik         | Add Stop, Google Geolocation API, Route Calculation Logic |
+| Steven (Yi Zhu) | Weather & Forecast, OpenWeatherMap API                    |
+| Jinte Li        | Notes, Clothing/Packing Suggestions                       |
+| Ethan           | Save Itinerary, History Repository, JSON Persistence      |
+| Mattias         | Reorder & Delete Stops, UI Components                     |
+| Roger He        | Set Start Date, Data Logic                                |
 
-•	UI work contribution
+---
 
-•	API weatheronmap
+## App Introduction & Objectives
 
-Roger He: User stories 8 from blueprint:
+Planning multi-city trips usually requires switching between several different tools. TravelPath solves this by integrating routing, weather data, and note-taking into a single clean interface.
 
-•	8. As a user, I want to set my trip start date and get daily reminders with weather highlights, so that I stay prepared.
+**Objective:**
+Build a compliant Java application that aggregates navigation, weather, and planning data into a unified Travel Record—incorporated with CLEAN Architecture Principles.
 
-•	5. As a user, I want to save my itinerary, so that I can return to it later.
+---
 
-•	UI work contribution
+## Main Features
 
-•   Presentation Contribution (Partial)
+### Multi-Stop Routing
 
-Steven Zhan: User story 6 from blueprint
+* Add unlimited stops (e.g., Toronto → Montreal → Vancouver)
+* Automatically calculates total distance and estimated travel time
 
-•	6. As a user, I want to attach notes to each stop, so that I can remember ideas or bookings.
+### Real-Time Weather
 
-•	Presentation Contribution
+* Shows current weather conditions
+* Includes 7-day forecasts for every stop
 
-•	UI work contribution
+### Smart Packing Suggestions
 
-•   Work on data persistence
+* Provides clothing recommendations based on forecasted temperatures and conditions
 
-•   Assist on User Story 7
+### Itinerary Management
 
-Ethan: User stories 5 from blueprint
+* Add or remove stops
+* Attach notes to stops
+* Set a trip start date
 
-•	5. As a user, I want to save my itinerary, so that I can return to it later.
+### Data Persistence
 
-• Work on data persistence
+* Save itineraries locally in JSON format
+* Load past trip histories
 
-Mattias: User stories 9 from blueprint:
+### Secure Login
 
-• 9. As a user, I want to reorder or delete stops easily, so that I can refine my plan.
+* Enforces password strength validation
 
-If there is any more staff we wanna do free for add
+---
 
-Milestone:
+## Technology Stack
 
-Choosing API and finished Blueprint(*)
+* **Language:** Java 17+
+* **Architecture:** Clean Architecture (Entity, Use Case, Interface Adapter, View)
+* **GUI:** Java Swing (GridBagLayout, CardLayout)
+* **APIs:**
 
-API validity check(*)
+  * Google Maps Geocoding API
+  * Mapbox Directions API
+  * OpenWeatherMap API
+* **Storage:** JSON (org.json)
+* **Testing:** JUnit 5
 
-API interface (*)
+---
 
-Meeting schedule:
+## User Guide
 
-Every Wednesday night 7pm to 8 pm and every Saturday from 10am to 2 pm(regular meeting time, if there is emergency issues or unsolved problem, time will be scheduled by that week)
+### 1. Prerequisites
+
+* JDK 17 or higher
+* IntelliJ IDEA (recommended)
+* API keys for Google Maps, Mapbox, and OpenWeather
+
+### 2. Installation & Setup
+
+**Clone the Repository:**
+
+```bash
+git clone https://github.com/Krithik-Kesh/Travel-Path.git
+```
+
+**Create a `.env` file at the project root:**
+
+```
+OPENWEATHER_API_KEY=your_key_here
+GOOGLE_API_KEY=your_key_here
+DIRECTIONS_TOKEN=your_mapbox_token_here
+```
+
+**Run the Application:**
+
+* Open `src/main/java/csc207_group/Main.java`
+* Run the `Main` method
+
+### 3. How to Use
+
+1. Log in using a username and a valid password
+2. Enter an Origin and Destination
+3. Add stops using the "Add City" field
+4. Click **Get Forecast & Route** to generate route and weather data
+5. Click **Save History** to store your itinerary locally
+
+---
+
+## Visuals & Interface
+
+### Login Screen
+
+<img width="2002" height="1394" alt="image" src="https://github.com/user-attachments/assets/56ca465f-9547-4a9a-b2ef-3dc1dd24569e" />
 
 
+### Main Planning Dashboard
+
+<img width="1998" height="1392" alt="image" src="https://github.com/user-attachments/assets/7660247c-14bb-42fa-88b1-3754a87c026f" />
+
+---
+
+## Documentation & Diagrams
+
+* Presentation slides: https://docs.google.com/presentation/d/18HwkptpcBJpO5bKsqpVr571G4_BbCMb_lfy6TvBvByI/edit?usp=sharing
+
+---
+
+## Future Plans
+
+* Add interactive map rendering using JxBrowser or Static Maps API
+* Move from JSON storage to cloud DB (Firebase, MongoDB)
+* Integrate flight search features (Skyscanner API)
+* Export itineraries as PDF or send via email
+
+---
+
+## References
+* Google Geocoding API Documentation
+* Mapbox Directions API Documentation
+* OpenWeatherMap API Documentation
+
+---
