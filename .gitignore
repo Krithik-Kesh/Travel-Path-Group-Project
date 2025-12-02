@@ -40,3 +40,7 @@ build/
 ### API KEYS ###
 .env
 src/.env
+
+### Local Persistence Files ###
+itineraries.json
+travel_history.json
