@@ -3,11 +3,12 @@ package ui;
 import GeolocationsAPIs.APICaller;
 import GeolocationsAPIs.GeocodingService;
 import WeatheronmapAPI.OpenWeathermapApiCaller;
-import data_access.InMemoryItineraryRepo;
+import data_access.JSONItineraryRepo;
 import data_access.OpenWeatherWeatherDataAccess;
 import data_access.RouteDataAccess;
 import data_access.WeatherDataAccessInterface;
 import entity.StopFactory;
+import entity.Itinerary;
 import interfaceadapter.IteneraryViewModel;
 import interfaceadapter.add_multiple_stops.AddStopController;
 import interfaceadapter.add_multiple_stops.AddStopPresenter;
@@ -83,8 +84,15 @@ public class WeatherDemoApp {
             AddNoteToStopOutputBoundary notePresenter =
                     new AddNoteToStopPresenter(notesViewModel);
 
-            ItineraryRepository itineraryRepository = new InMemoryItineraryRepo();
+            ItineraryRepository itineraryRepository = new JSONItineraryRepo("itineraries.json");
             String itineraryId = "demo-itinerary";
+
+            // loads saved stops whenever the app starts
+
+            Itinerary existing = itineraryRepository.findById(itineraryId);
+            if (existing != null) {
+                itineraryViewModel.setStops(existing.getStops());
+            }
 
             SetStartDateViewModel setStartDateViewModel = new SetStartDateViewModel();
             SetStartDateOutputBoundary setStartDatePresenter =

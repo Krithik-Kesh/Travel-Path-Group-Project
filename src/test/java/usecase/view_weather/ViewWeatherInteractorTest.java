@@ -1,11 +1,9 @@
+package usecase.view_weather;
+
 import entity.DailyWeather;
 import entity.WeatherData;
 import org.junit.jupiter.api.Test;
 import data_access.WeatherDataAccessInterface;
-import usecase.view_weather.InputData;
-import usecase.view_weather.OutputData;
-import usecase.view_weather.ViewWeatherInteractor;
-import usecase.view_weather.ViewWeatherOutputBound;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -96,12 +94,12 @@ class ViewWeatherInteractorTest {
         assertFalse(presenter.errorCalled, "Presenter.presentError must NOT be called");
 
         assertNotNull(presenter.lastOutput);
-        assertEquals("Toronto", presenter.lastOutput.getDestinationLabel());
-        assertNotNull(presenter.lastOutput.getCurrentWeather());
-        assertEquals(3, presenter.lastOutput.getForecast().size());
+        assertEquals("Toronto", presenter.lastOutput.destinationLabel());
+        assertNotNull(presenter.lastOutput.currentWeather());
+        assertEquals(3, presenter.lastOutput.forecast().size());
 
-        assertNotNull(presenter.lastOutput.getClothingSuggestionText());
-        assertFalse(presenter.lastOutput.getClothingSuggestionText().isEmpty());
+        assertNotNull(presenter.lastOutput.clothingSuggestionText());
+        assertFalse(presenter.lastOutput.clothingSuggestionText().isEmpty());
     }
 
     @Test

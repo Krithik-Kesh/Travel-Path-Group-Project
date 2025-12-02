@@ -1,0 +1,11 @@
+[{
+    "id": "demo-itinerary",
+    "stops": [{
+        "notes": "Nice city!",
+        "cityName": "Ottawa, ON, Canada",
+        "latitude": 45.4200572,
+        "id": "b398e34e-f435-48c1-8b75-3f504fa48787",
+        "longitude": -75.7003397
+    }],
+    "startDate": "2025-12-01"
+}]

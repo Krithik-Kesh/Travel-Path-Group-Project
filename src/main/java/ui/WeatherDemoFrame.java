@@ -1,5 +1,13 @@
 package ui;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.io.BufferedWriter;
+import java.io.IOException;
+
 import GeolocationsAPIs.GeocodingService;
 import interfaceadapter.notes.AddNoteToStopController;
 import interfaceadapter.notes.NotesViewModel;
@@ -82,6 +90,7 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
     private JList<String> stopList;
 
     // History
+    private static final String HISTORY_FILE = "travel_history.json";
     private final DefaultListModel<String> historyModel = new DefaultListModel<>();
     private JList<String> historyList;
 
@@ -437,6 +446,9 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
         currentUser = username;
         welcomeLabel.setText("Welcome, " + currentUser + "!");
         loginErrorLabel.setText(" ");
+
+        loadHistoryForCurrentUser();
+
         cardLayout.show(cards, "main");
     }
 
@@ -491,44 +503,50 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
     }
 
     private void onSaveNote() {
-        int index = stopList.getSelectedIndex();
-        if (index < 0) {
-            errorLabel.setText("Please select a stop to save note.");
-            return;
-        }
-        List<ItineraryStop> stops = itineraryViewModel.getStops();
-        if (stops == null || index >= stops.size()) {
-            errorLabel.setText("Invalid stop selection.");
-            return;
-        }
-        String noteText = noteArea.getText().trim();
-        if (noteText.isEmpty()) {
-            errorLabel.setText("Note cannot be empty.");
-            return;
-        }
-        ItineraryStop stop = stops.get(index);
-        try {
-            Itinerary itinerary = itineraryRepository.findById(itineraryId);
-            if (itinerary == null) {
-                itinerary = new Itinerary(itineraryId, null, stops);
-            } else {
-                itinerary.getStops().clear();
-                itinerary.getStops().addAll(stops);
-            }
-            itineraryRepository.save(itinerary);
-            addNoteController.addOrUpdateNote(itineraryId, stop.getId(), noteText);
-            if (notesViewModel.hasError()) {
-                errorLabel.setText(notesViewModel.getErrorMessage());
+            int index = stopList.getSelectedIndex();
+            if (index < 0) {
+                errorLabel.setText("Please select a stop to save note.");
                 return;
             }
-            itineraryViewModel.setStops(new java.util.ArrayList<>(stops));
-            errorLabel.setText("Saved note for: " + stop.getName());
-        } catch (Exception e) {
-            errorLabel.setText("Failed to save note: " + e.getMessage());
-        }
-    }
 
-    private void onGetWeather() {
+            List<ItineraryStop> stops = itineraryViewModel.getStops();
+            if (stops == null || index >= stops.size()) {
+                errorLabel.setText("Invalid stop selection.");
+                return;
+            }
+
+            String noteText = noteArea.getText().trim();
+            if (noteText.isEmpty()) {
+                errorLabel.setText("Note cannot be empty.");
+                return;
+            }
+
+            ItineraryStop stop = stops.get(index);
+            stop.setNotes(noteText);
+
+            try {
+                Itinerary itinerary = itineraryRepository.findById(itineraryId);
+                if (itinerary == null) {
+                    itinerary = new Itinerary(itineraryId, null, new java.util.ArrayList<>(stops));
+                } else {
+                    itinerary.getStops().clear();
+                    itinerary.getStops().addAll(stops);
+                }
+
+                itineraryRepository.save(itinerary);
+
+                notesViewModel.setErrorMessage("");
+                notesViewModel.setCurrentNoteText(noteText);
+
+                itineraryViewModel.setStops(new java.util.ArrayList<>(stops));
+                errorLabel.setText("Saved note for: " + stop.getName());
+            } catch (Exception e) {
+                errorLabel.setText("Failed to save note: " + e.getMessage());
+            }
+        }
+
+
+        private void onGetWeather() {
         String originCity = originField.getText().trim();
         String dest = destinationField.getText().trim();
         String startDateText = startDateField.getText().trim();
@@ -674,7 +692,9 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
         int size = historyModel.getSize();
         if (size == 0 || !historyStr.equals(historyModel.getElementAt(size - 1))) {
             historyModel.addElement(historyStr);
+            saveHistoryLine(historyStr);
         }
+
     }
 
     // --- RESTORED METHOD: Updates the Stops List ---
@@ -701,6 +721,65 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
         if (travelDistanceValueLabel != null) travelDistanceValueLabel.setText(distanceText);
         if (travelTimeValueLabel != null) travelTimeValueLabel.setText(timeText);
     }
+
+        private void loadHistoryForCurrentUser() {
+            historyModel.clear();
+            if (currentUser == null || currentUser.isEmpty()) {
+                return;
+            }
+
+            JSONObject root = readHistoryRoot();
+            if (!root.has(currentUser)) {
+                return;
+            }
+
+            JSONArray arr = root.getJSONArray(currentUser);
+            for (int i = 0; i < arr.length(); i++) {
+                String line = arr.getString(i);
+                historyModel.addElement(line);
+            }
+        }
+
+        private void saveHistoryLine(String historyStr) {
+            if (currentUser == null || currentUser.isEmpty()) {
+                return;
+            }
+
+            try {
+                JSONObject root = readHistoryRoot();
+                JSONArray arr = root.optJSONArray(currentUser);
+                if (arr == null) {
+                    arr = new JSONArray();
+                }
+                arr.put(historyStr);
+                root.put(currentUser, arr);
+
+                try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(HISTORY_FILE))) {
+                    writer.write(root.toString(4));
+                }
+            } catch (IOException e) {
+                System.err.println("Failed to write history: " + e.getMessage());
+            }
+        }
+
+        private JSONObject readHistoryRoot() {
+            Path path = Paths.get(HISTORY_FILE);
+            if (!Files.exists(path)) {
+                return new JSONObject();
+            }
+            try {
+                String content = Files.readString(path);
+                if (content == null || content.isBlank()) {
+                    return new JSONObject();
+                }
+                return new JSONObject(content);
+            } catch (IOException e) {
+                System.err.println("Failed to read history: " + e.getMessage());
+                return new JSONObject();
+            }
+        }
+
+
 
     private static boolean checkForPassword(String str, int minLength) {
         if (str == null || str.length() < minLength) return false;
