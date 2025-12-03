@@ -666,7 +666,7 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
         }
 
 
-        private void onGetWeather() {
+    private void onGetWeather() {
         String originCity = originField.getText().trim();
         String dest = destinationField.getText().trim();
         String startDateText = startDateField.getText().trim();
@@ -675,10 +675,24 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
             errorLabel.setText("Please enter both origin and destination.");
             return;
         }
+
         currentStartDate = "";
         if (!startDateText.isEmpty()) {
             try {
                 LocalDate parsedDate = LocalDate.parse(startDateText);
+                LocalDate today = LocalDate.now();
+                LocalDate maxForecastDate = today.plusDays(7);
+
+                if (parsedDate.isBefore(today)) {
+                    errorLabel.setText("Start date must be today or in the future.");
+                    return;
+                }
+
+                if (parsedDate.isAfter(maxForecastDate)) {
+                    errorLabel.setText("Weather forecast is only available for dates within the next 7 days.");
+                    return;
+                }
+
                 currentStartDate = startDateText;
                 if (setStartDateController != null) {
                     setStartDateController.setStartDate(parsedDate);
@@ -688,6 +702,7 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
                 return;
             }
         }
+
         mainDestination = dest;
         currentWeatherArea.setText("");
         cityWeatherMap.clear();
@@ -702,6 +717,7 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
                     weatherController.viewWeather(s.getLatitude(), s.getLongitude(), s.getName());
                 }
             }
+
             java.util.List<ItineraryStop> routeStops = new java.util.ArrayList<>();
             routeStops.add(new ItineraryStop("origin", originCity, originCoords.getLat(), originCoords.getLon(), ""));
             if (stops != null && !stops.isEmpty()) {
@@ -722,6 +738,7 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
             updateTravelInfo("N/A", "N/A");
         }
     }
+
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
