@@ -26,7 +26,7 @@ TravelPath is a desktop application designed to streamline the travel planning p
 | Name            | Role / Contributions                                                              |
 |-----------------|-----------------------------------------------------------------------------------|
 | Krithik         | Add Stop, Google Geolocation API, Route Calculation Logic                         |
-| Steven (Yi Zhu) | Weather & Forecast, tipGenerator OpenWeatherMap API, Clothing/Packing Suggestions |
+| Steven (Yi Zhu) | Weather & Forecast, OpenWeatherMap API, Clothing/Packing Suggestions |
 | Steven Zhan     | Notes per stop, Checkstyle Implementation, Presentation template                  |
 | Ethan           | Save Itinerary, History Repository, JSON Persistence                              |
 | Mattias         | Reorder & Delete Stops, UI Components                                             |
